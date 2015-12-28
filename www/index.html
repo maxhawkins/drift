@@ -139,9 +139,17 @@ DriftWindow.prototype.set_scale_x = function(sx) {
 
     this.$el.scrollLeft = this.t2px(cur_t) - rx;
 }
-DriftWindow.prototype.set_t = function(t) {
-    this.$razor.style.left = this.t2px(t);
-    // TODO: auto-scroll
+DriftWindow.prototype.set_t = function(t, paused) {
+    var rx = this.t2px(t);
+    this.$razor.style.left = rx;
+
+    // auto-scroll
+    var x = this.$el.scrollLeft;
+    var w = this.$el.clientWidth;
+
+    if(!paused && (rx < x || rx > (x+w))) {
+        this.$el.scrollLeft = rx - 50;
+    }
 
     // Highlight current word
     var wds = this.words
@@ -359,7 +367,7 @@ window.onkeydown = function(ev) {
 }
 
 function tick() {
-    drift_window.set_t($a.currentTime);
+    drift_window.set_t($a.currentTime, $a.paused);
     window.requestAnimationFrame(tick);
 }
 
