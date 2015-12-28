@@ -1,0 +1,229 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>drift</title>
+    <style>
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #333;
+    color: black;
+    font-family: Helvetica, sans;
+    font-size: 10pt;
+}
+.driftwindow {
+    background-color: white;
+    border: 1px solid black;
+    position: relative;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+.word {
+    position: absolute;
+    bottom: 0;
+}
+.wav {
+    position: absolute;
+    top: 0;
+}
+.pitches {
+    position: absolute;
+    top: 200;
+}
+    </style>
+  </head>
+  <body>
+Loading...
+    <script>
+
+function _get(url, cb) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.onload = function() {
+        cb(this.responseText);
+    }
+    xhr.send();
+}
+function _get_json(url, cb) {
+    _get(url, function(x) {
+        cb(JSON.parse(x));
+    });
+}
+
+var DriftWindow = function(words, pitches, energy) {
+    this.words = words;
+    this.pitches = pitches;
+    this.energy = energy;
+
+    this.CHUNK_W = 1000;        // px
+    this.WAV_H = 200;
+    this.PITCH_H = 200;
+    this.WORDS_H = 50;    
+    this.SCALE_X  = 150;        // Pixels/second
+
+    this.MAX_PITCH = this.pitches.reduce(function(x,y) { return x > y ? x : y; });
+
+    this.$el = document.createElement("div");
+    this.$el.className = "driftwindow";
+    this.$cont = document.createElement("div");
+    this.$cont.className = "cont";
+    this.$el.appendChild(this.$cont);
+
+    this.$el.style.height = this.WAV_H + this.PITCH_H + this.WORDS_H;
+    this.$el.style.width = this.CHUNK_W;
+    
+    this.$cont.style.width = this.t2px(this.pitches.length/100);
+    this.$cont.style.height = this.WAV_H + this.PITCH_H + this.WORDS_H;
+
+    this.chunks$ = {};          // idx -> {words: $div, pitch: $canvas, wav: $canvas}
+
+    this.show_visible();
+    this.$el.onscroll = this.show_visible.bind(this);
+}
+DriftWindow.prototype.show_visible = function() {
+    var x = this.$el.scrollLeft;
+    var w = this.$el.clientWidth;
+
+    var chunk_idx = Math.floor(x / this.CHUNK_W);
+    var end_chunk_idx = Math.ceil((x+w) / this.CHUNK_W);
+    while(chunk_idx <= end_chunk_idx) {
+        if(!(chunk_idx in this.chunks$)) {
+            this.chunks$[chunk_idx] = {};
+            this.render_chunk(chunk_idx);
+        }
+        chunk_idx += 1;
+    }
+}
+DriftWindow.prototype.px2t = function(x) {
+    return x / this.SCALE_X;
+}
+DriftWindow.prototype.t2px = function(t) {
+    return t * this.SCALE_X;
+}
+DriftWindow.prototype.pitch2px = function(p) {
+    return this.t2px(p/100);
+}
+DriftWindow.prototype.px2pitch = function(x) {
+    return Math.round(this.px2t(x) * 100);
+}
+DriftWindow.prototype.render_chunk = function(idx) {
+    this.render_wav(idx);
+    this.render_pitch(idx);
+    this.render_words(idx);
+}
+DriftWindow.prototype.render_wav = function(idx) {
+    var $can = document.createElement("canvas");
+    $can.className = "wav";
+    $can.setAttribute("width", this.CHUNK_W);
+    $can.setAttribute("height", this.WAV_H);
+    $can.style.left = this.CHUNK_W * idx;
+    this.chunks$["$wav"] = $can;    
+    this.$el.appendChild($can);
+
+    var start_pitch_idx = this.px2pitch(idx*this.CHUNK_W);
+    var end_pitch_idx = this.px2pitch((idx+1)*this.CHUNK_W);
+
+    var ctx = $can.getContext("2d");
+    ctx.beginPath();
+    for(var i=start_pitch_idx; i<end_pitch_idx; i++) {
+        // x-offset (assumes linear time)
+        var x = this.pitch2px(i-start_pitch_idx);
+        var h = this.energy[i] * (this.WAV_H*0.5);
+        // Center vertically
+        var y = this.WAV_H/2 - h/2;
+
+        ctx.moveTo(x,y);
+        ctx.lineTo(x,y+h);
+    }
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+}
+DriftWindow.prototype.render_pitch = function(idx) {
+    var $can = document.createElement("canvas");
+    $can.className = "pitches";
+    $can.setAttribute("width", this.CHUNK_W);
+    $can.setAttribute("height", this.WAV_H);
+    $can.style.left = this.CHUNK_W * idx;
+    this.chunks$["$wav"] = $can;    
+    this.$el.appendChild($can);
+
+    var start_pitch_idx = this.px2pitch(idx*this.CHUNK_W);
+    var end_pitch_idx = this.px2pitch((idx+1)*this.CHUNK_W);
+
+    var ctx = $can.getContext("2d");
+    ctx.fillStyle = "blue";
+    for(var i=start_pitch_idx; i<end_pitch_idx; i++) {
+        if(this.pitches[i] == 0) {
+            continue;
+        }
+        
+        // x-offset (assumes linear time)
+        var x = this.pitch2px(i-start_pitch_idx);
+        var y = this.PITCH_H - (this.pitches[i] * (this.PITCH_H / this.MAX_PITCH));
+        var r = 2;
+        x -= r/2;
+        y -= r/2;
+
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, 2*Math.PI);
+        ctx.fill();
+    }
+}
+DriftWindow.prototype.render_words = function(idx) {
+    var $wds = document.createElement("div");
+    this.chunks$["$words"] = $wds;
+    this.$el.appendChild($wds);
+
+    var start_t = this.px2t(idx * this.CHUNK_W);
+    var end_t   = this.px2t((idx+1) * this.CHUNK_W);
+
+    this.words
+        .filter(function(x) {
+            // XXX: Words straddling split point may be rendered twice.
+            return x.start < end_t && x.end > start_t;
+        })
+        .forEach(function(x) {
+            var $w = document.createElement("div");
+            x.__$div = $w;
+            $w.className = "word";
+            $w.style.left = this.t2px(x.start);
+            $w.textContent = x.word;
+            $wds.appendChild($w);
+        }, this)
+}
+
+
+var drift_window;
+
+_get_json("words.json", function(words) {
+    _get("pitches.txt", function(pitch_txt) {
+
+        var ret = parse_pitches(pitch_txt);
+
+        document.body.innerHTML = "";
+        drift_window = new DriftWindow(words, ret["pitches"], ret["energy"]);
+        document.body.appendChild(drift_window.$el);
+        
+    });
+});
+
+function parse_pitches(txt) {
+    var lines = txt.split('\n');
+    var pitches = [];
+    var energy  = [];
+
+    lines.forEach(function(l) {
+        var parts = l.split(' ');
+        if(parts.length > 2) {
+            pitches.push(Number(parts[1]));
+            energy.push(Number(parts[2]));
+        }
+    });
+
+    return {pitches: pitches, energy: energy};
+}
+      
+    </script>
+  </body>
+</html>
