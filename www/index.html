@@ -14,7 +14,7 @@ body {
 }
 .driftwindow {
     background-color: white;
-    border: 1px solid black;
+    border: 2px solid black;
     position: relative;
     overflow-x: auto;
     overflow-y: hidden;
@@ -41,7 +41,23 @@ body {
     top: 0;
     z-index: 20;
 }
-
+.zoom {
+    height: 15px;
+    position: absolute;
+    background-color: white;
+    border: 1px solid black;
+    text-align: right;
+    font-style: italic;
+    padding: 0 5px;
+}
+.zoom .amount { 
+    position: absolute;
+    top: -7;
+    height: 26px;
+    width: 6px;
+    background-color: #999;
+    border: 2px solid black;
+}
 </style>
   </head>
   <body>
@@ -107,6 +123,22 @@ var DriftWindow = function(words, pitches, energy, seek_cb) {
         this.seek_cb(this.px2t(this.$el.scrollLeft + ev.clientX));
     }.bind(this)
 }
+DriftWindow.prototype.reset = function() {
+    this.$cont.innerHTML = "";
+    this.chunks$ = {};
+}
+DriftWindow.prototype.set_scale_x = function(sx) {
+    // lock razor position?
+    var rx = this.$razor.offsetLeft - this.$el.scrollLeft;
+    var cur_t = this.px2t(this.$razor.offsetLeft);
+    
+    this.reset();
+    this.SCALE_X = sx;
+    this.$cont.style.width = this.t2px(this.pitches.length/100);
+    this.show_visible();
+
+    this.$el.scrollLeft = this.t2px(cur_t) - rx;
+}
 DriftWindow.prototype.set_t = function(t) {
     this.$razor.style.left = this.t2px(t);
     // TODO: auto-scroll
@@ -170,7 +202,7 @@ DriftWindow.prototype.render_wav = function(idx) {
     $can.setAttribute("height", this.WAV_H);
     $can.style.left = this.CHUNK_W * idx;
     this.chunks$["$wav"] = $can;    
-    this.$el.appendChild($can);
+    this.$cont.appendChild($can);
 
     var start_pitch_idx = this.px2pitch(idx*this.CHUNK_W);
     var end_pitch_idx = this.px2pitch((idx+1)*this.CHUNK_W);
@@ -198,7 +230,7 @@ DriftWindow.prototype.render_pitch = function(idx) {
     $can.setAttribute("height", this.WAV_H);
     $can.style.left = this.CHUNK_W * idx;
     this.chunks$["$wav"] = $can;    
-    this.$el.appendChild($can);
+    this.$cont.appendChild($can);
 
     var start_pitch_idx = this.px2pitch(idx*this.CHUNK_W);
     var end_pitch_idx = this.px2pitch((idx+1)*this.CHUNK_W);
@@ -225,7 +257,7 @@ DriftWindow.prototype.render_pitch = function(idx) {
 DriftWindow.prototype.render_words = function(idx) {
     var $wds = document.createElement("div");
     this.chunks$["$words"] = $wds;
-    this.$el.appendChild($wds);
+    this.$cont.appendChild($wds);
 
     var start_t = this.px2t(idx * this.CHUNK_W);
     var end_t   = this.px2t((idx+1) * this.CHUNK_W);
@@ -245,8 +277,48 @@ DriftWindow.prototype.render_words = function(idx) {
         }, this)
 }
 
+var ZoomBar = function(zoom_cb) {
+    this.ZOOM_W = 300;
 
-var drift_window;
+    this.zoom_cb = zoom_cb;
+
+    this.$el = document.createElement("div");
+    this.$el.className = "zoom";    
+    this.$el.innerHTML = "zoom";
+    this.$el.style.width = this.ZOOM_W - 10; // (padding)
+
+    this.$amnt = document.createElement("div");
+    this.$amnt.className = "amount";
+    this.$el.appendChild(this.$amnt);
+
+    this.$el.onmousedown = function(ev) {
+        // XXX: abstract to handle touch events as well
+        ev.preventDefault();
+
+        window.onmousemove = function(ev) {
+            ev.preventDefault();
+
+            var amnt = (ev.clientX - this.$el.offsetLeft) / this.ZOOM_W;
+            // Clip
+            amnt = Math.min(1, Math.max(0, amnt));
+            this.set_zoom(amnt);
+            this.zoom_cb(amnt);
+
+        }.bind(this)
+        window.onmouseup = function(ev) {
+            ev.preventDefault();
+            window.onmousemove = null;            
+            window.onmouseup = null;
+        }
+    }.bind(this)
+
+    this.set_zoom(0.5);
+}
+ZoomBar.prototype.set_zoom = function(amnt) {
+    this.$amnt.style.left = amnt * this.ZOOM_W - 5;
+}
+
+var drift_window, zoombar;
 var $a = document.createElement("audio");
 $a.src = "a.wav";
 
@@ -258,6 +330,13 @@ _get_json("words.json", function(words) {
         document.body.innerHTML = "";
         drift_window = new DriftWindow(words, ret["pitches"], ret["energy"], on_seek);
         document.body.appendChild(drift_window.$el);
+
+        zoombar = new ZoomBar(function(amnt) {
+            drift_window.set_scale_x(50 + amnt*250);
+        });
+        zoombar.$el.style.left = 700;
+        zoombar.$el.style.top = 500;
+        document.body.appendChild(zoombar.$el);
 
         tick();
     });
