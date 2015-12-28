@@ -23,6 +23,9 @@ body {
     position: absolute;
     bottom: 0;
 }
+.word.active {
+    color: red;
+}
 .wav {
     position: absolute;
     top: 0;
@@ -107,6 +110,27 @@ var DriftWindow = function(words, pitches, energy, seek_cb) {
 DriftWindow.prototype.set_t = function(t) {
     this.$razor.style.left = this.t2px(t);
     // TODO: auto-scroll
+
+    // Highlight current word
+    var wds = this.words
+        .filter(function(x) {
+            return x.start <= t && x.end >= t;
+        });
+    var new_wd;
+    if(wds.length > 0) {
+        new_wd = wds[0];
+        if(new_wd == this.cur_wd) {
+            // No change
+            return;
+        }
+        if(new_wd && new_wd.__$div) {
+            new_wd.__$div.classList.add("active");
+        }
+    }
+    if(this.cur_wd && this.cur_wd.__$div) {
+        this.cur_wd.__$div.classList.remove("active");
+    }
+    this.cur_wd = new_wd;
 }
 DriftWindow.prototype.show_visible = function() {
     var x = this.$el.scrollLeft;
