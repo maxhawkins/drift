@@ -1,0 +1,3 @@
+[submodule "calc_sbpca"]
+	path = calc_sbpca
+	url = https://github.com/dpwe/calc_sbpca.git
