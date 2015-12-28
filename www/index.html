@@ -10,6 +10,7 @@ body {
     color: black;
     font-family: Helvetica, sans;
     font-size: 10pt;
+    overflow: hidden;
 }
 .driftwindow {
     background-color: white;
@@ -30,7 +31,15 @@ body {
     position: absolute;
     top: 200;
 }
-    </style>
+.razor {
+    background-color: red;
+    width: 1px;
+    position: absolute;
+    top: 0;
+    z-index: 20;
+}
+
+</style>
   </head>
   <body>
 Loading...
@@ -50,10 +59,15 @@ function _get_json(url, cb) {
     });
 }
 
-var DriftWindow = function(words, pitches, energy) {
+var DriftWindow = function(words, pitches, energy, seek_cb) {
     this.words = words;
     this.pitches = pitches;
     this.energy = energy;
+    
+    // rmo -> mhawkins: We should probably use an event framework. I
+    // use this thing called "Triggerable" in seatbelt.js, but you may
+    // have some preferenes?
+    this.seek_cb = seek_cb;
 
     this.CHUNK_W = 1000;        // px
     this.WAV_H = 200;
@@ -75,10 +89,24 @@ var DriftWindow = function(words, pitches, energy) {
     this.$cont.style.width = this.t2px(this.pitches.length/100);
     this.$cont.style.height = this.WAV_H + this.PITCH_H + this.WORDS_H;
 
+    this.$razor = document.createElement("div");
+    this.$razor.className = "razor";
+    this.$razor.style.height = this.WAV_H + this.PITCH_H + this.WORDS_H;
+    this.$el.appendChild(this.$razor);
+
     this.chunks$ = {};          // idx -> {words: $div, pitch: $canvas, wav: $canvas}
 
     this.show_visible();
     this.$el.onscroll = this.show_visible.bind(this);
+
+    this.$el.onclick = function(ev) {
+        // Computation assumes window starts at 0 (should use $el.offsetLeft, etc).
+        this.seek_cb(this.px2t(this.$el.scrollLeft + ev.clientX));
+    }.bind(this)
+}
+DriftWindow.prototype.set_t = function(t) {
+    this.$razor.style.left = this.t2px(t);
+    // TODO: auto-scroll
 }
 DriftWindow.prototype.show_visible = function() {
     var x = this.$el.scrollLeft;
@@ -181,7 +209,7 @@ DriftWindow.prototype.render_words = function(idx) {
     this.words
         .filter(function(x) {
             // XXX: Words straddling split point may be rendered twice.
-            return x.start < end_t && x.end > start_t;
+            return x.start > 0 && x.start < end_t && x.end > start_t;
         })
         .forEach(function(x) {
             var $w = document.createElement("div");
@@ -195,6 +223,8 @@ DriftWindow.prototype.render_words = function(idx) {
 
 
 var drift_window;
+var $a = document.createElement("audio");
+$a.src = "a.wav";
 
 _get_json("words.json", function(words) {
     _get("pitches.txt", function(pitch_txt) {
@@ -202,11 +232,33 @@ _get_json("words.json", function(words) {
         var ret = parse_pitches(pitch_txt);
 
         document.body.innerHTML = "";
-        drift_window = new DriftWindow(words, ret["pitches"], ret["energy"]);
+        drift_window = new DriftWindow(words, ret["pitches"], ret["energy"], on_seek);
         document.body.appendChild(drift_window.$el);
-        
+
+        tick();
     });
 });
+
+function on_seek(t) {
+    $a.currentTime = t;
+}
+
+window.onkeydown = function(ev) {
+    if(ev.keyCode == 32) {      // space bar
+        ev.preventDefault();
+        if($a.paused) {
+            $a.play();
+        }
+        else {
+            $a.pause();
+        }
+    }
+}
+
+function tick() {
+    drift_window.set_t($a.currentTime);
+    window.requestAnimationFrame(tick);
+}
 
 function parse_pitches(txt) {
     var lines = txt.split('\n');
