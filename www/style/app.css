@@ -1,0 +1,60 @@
+body {
+    margin: 0;
+    padding: 1em;
+    background-color: #EEE;
+    color: black;
+    font-family: Helvetica, sans;
+    font-size: 10pt;
+    overflow: hidden;
+}
+header {
+    background-color: #333;
+    height: 100px;
+    width: 100%;
+}
+.driftwindow {
+    background-color: white;
+    border: 2px solid black;
+    position: relative;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+.word {
+    position: absolute;
+    bottom: 0;
+}
+.word.active {
+    color: red;
+}
+.wav {
+    position: absolute;
+    top: 0;
+}
+.pitches {
+    position: absolute;
+    top: 200;
+}
+.razor {
+    background-color: red;
+    width: 1px;
+    position: absolute;
+    top: 0;
+    z-index: 20;
+}
+.zoom {
+    height: 15px;
+    position: absolute;
+    background-color: white;
+    border: 1px solid black;
+    text-align: right;
+    font-style: italic;
+    padding: 0 5px;
+}
+.zoom .amount { 
+    position: absolute;
+    top: -7;
+    height: 26px;
+    width: 6px;
+    background-color: #999;
+    border: 2px solid black;
+}
