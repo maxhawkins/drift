@@ -5,7 +5,9 @@ function SessionWatcher(sessionID) {
   this.lastStatus = null;
   this.interval = 500;
   this.callbacks = [];
-  window.setTimeout(this._check.bind(this), this.interval);
+  this._check = this._check.bind(this);
+
+  window.setTimeout(this._check, this.interval);
 }
 
 SessionWatcher.prototype.watch = function(callback) {
@@ -41,7 +43,7 @@ SessionWatcher.prototype._check = function() {
       }
 
       if (!this.stopped) {
-        setTimeout(this._check.bind(this), this.interval);
+        setTimeout(this._check, this.interval);
       }
     }.bind(this));
 }

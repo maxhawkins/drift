@@ -18,14 +18,11 @@
 	stroke: #333;
 	stroke-width: 1px;
 }
-.timeline .inner {
-    overflow-x: scroll;
-}
-.timeline .staff {
+.timeline .playhead {
 	stroke: red;
 	stroke-width: 1;
 }
-.timeline .staff text {
+.timeline .playhead text {
     stroke: none;
     fill: red;
     font-size: 12px;
@@ -37,16 +34,10 @@
     -ms-user-select: none;
     user-select: none;
 }
-.timeline .dots {
+.timeline .pitch-trace {
 	fill: #555;
 }
-.timeline .pitch-line {
-    stroke: #FAFAFA;
-    stroke-width: 1;
-    fill: none;
-    display: none;
-}
-.timeline .waveform-center {
+.timeline .waveform .rule {
     stroke: #EAEAEA;
     stroke-width 1px;
 }
@@ -56,7 +47,7 @@
 .timeline .waveform .rms {
 	fill: #777;
 }
-.timeline .transcript line {
+.timeline .timed-text line {
     stroke: #EEE;
     stroke-width: 1px;
     stroke-dasharray: 5, 5;

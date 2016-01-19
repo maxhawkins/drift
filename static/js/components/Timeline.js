@@ -1,277 +1,91 @@
 function Timeline() {
   this.props = {
-    freq_hz: [],
+    freqHz: [],
     waveform: [],
+    words: [],
     currentTime: 0,
     zoom: 0,
+    paddingLeft: 60,
+    paddingRight: 60,
   };
+
   var $el = this.$el = document.createElement('div');
   $el.className = 'timeline';
 
-  var $inner = this.$inner = document.createElement('div');
-  $inner.className = 'inner';
-  $el.appendChild($inner);
+  var $scroll = this.$scroll = document.createElement('div');
+  $scroll.className = 'scroll';
+  $scroll.style['overflow-x'] = 'scroll';
+  $el.appendChild($scroll);
 
-  var $scales = this.$scales = d3.select($el)
-  .append('svg')
-    .attr('class', 'scales')
-    .attr('height', '100%')
+  var $canvas = this.$canvas = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  $canvas.setAttribute('height', '100%');
+  $canvas.addEventListener('mousedown', this._handleClick.bind(this), false);
+  $scroll.appendChild($canvas);
 
-  var $canvas = this.$canvas = d3.select($inner)
-  .append('svg')
-    .attr('height', '100%')
-    .on('click', this._handleClick.bind(this))
+  var $charts = this.$charts = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  var transform = 'translate(' + this.props.paddingLeft + ', 0)';
+  this.$charts.setAttribute('transform', transform);
+  $charts.setAttribute('class', 'charts');
+  $canvas.appendChild($charts);
 
-  this.$charts = $canvas.append('g');
+  var timedText = this.timedText = new TimedText();
+  timedText.$el.setAttribute('transform', 'translate(0, 400)');
+  $charts.appendChild(timedText.$el);
 
-  var $staff = this.$staff = $canvas.append('g')
-    .attr('class', 'staff')
-  $staff.append('line')
-    .attr('y1', 0)
-    .attr('y2', '100%');
-  this.$staffLabel = $staff.append('text')
-    .attr('transform', 'translate(5, 12)')
-    .text('00:00');
+  var waveform = this.waveform = new Waveform();
+  waveform.props.scaleY = 100;
+  waveform.$el.setAttribute('transform', 'translate(0, 100) scale(1, -1)');
+  $charts.appendChild(waveform.$el);
 
+  var pitchTrace = this.pitchTrace = new PitchTrace();
+  pitchTrace.props.scaleY = 150;
+  pitchTrace.$el.setAttribute('transform', 'translate(0, 100)');
+  $charts.appendChild(pitchTrace.$el);
 
-  this.scaleX = d3.scale.linear();
+  var playhead = this.playhead = new Playhead();
+  $charts.appendChild(playhead.$el);
+
+  this._scaleX = this._scaleX.bind(this);
 }
 
-Timeline.prototype._handleClick = function() {
-  var screenX = d3.mouse(this.$inner)[0] + this.$inner.scrollLeft;
-  var newTime = this.scaleX.invert(screenX);
-  if (this.onSeek) {
-    this.onSeek(newTime);
+Timeline.prototype._scaleX = function() {
+  return 1000 * this.props.zoom + 30 * (1 - this.props.zoom);
+}
+
+Timeline.prototype._handleClick = function(e) {
+  var screenX = e.offsetX + this.$canvas.scrollLeft - this.props.paddingLeft;
+  var newTime = screenX / this._scaleX();
+  if (this.props.onSeek) {
+    this.props.onSeek(newTime);
   }
 };
 
-function pad(x, n) {
-  return ('000000000' + x).slice(-n);
-}
-
-function timestamp(seconds) {
-  var mins = parseInt(seconds / 60);
-  var secs = parseInt(seconds - mins * 60);
-  var frac = parseInt((seconds - secs - mins * 60) * 100);
-
-  return pad(mins, 2) +
-    ':' +
-    pad(secs, 2) +
-    '.' +
-    pad(frac, 2);
-}
-
 Timeline.prototype.render = function() {
-  var lengthSecs = d3.max(this.props.waveform, function(x) {
-    var time = x[0];
-    return time;
-  });
-
-  var paddingLeft = 60;
-  var chartWidth = (15 + this.props.zoom * 1000) * lengthSecs;
-
-  var scaleX = this.scaleX;
-  scaleX
-    .domain([0, lengthSecs])
-    .range([paddingLeft, paddingLeft + chartWidth]);
-
-  var newWidth = scaleX(lengthSecs) - scaleX(0) + 100;
-  var widthChanged = !this.oldWidth || (this.oldWidth - newWidth) > 1e-3
-  if (widthChanged) {
-    this.$canvas.attr('width', newWidth);
-    this.oldWidth = newWidth;
-  }
-
-  var currentTime = this.props.currentTime;
-  this.$staff
-    .attr('transform', function(val) {
-      var x = scaleX(currentTime);
-      return 'translate(' + x + ', 0)';
-    });
-  this.$staffLabel.text(timestamp(currentTime));
-
-  var waveformPairs = [];
   var waveform = this.props.waveform;
-  for (var i = 0; i < waveform.length; i++) {
-    var time = waveform[i][0];
-    var peak = waveform[i][1];
-    var rms = waveform[i][2];
-    var lastTime = 0;
-    if (i > 0) {
-      var lastTime = waveform[i-1][0];
-    }
-    var duration = time - lastTime;
-    waveformPairs.push([lastTime, duration, peak, rms]);
+  var lastSample = waveform[waveform.length - 1];
+  var duration = lastSample[0] + lastSample[1];
+
+  var width = parseInt(
+    this._scaleX() * duration +
+    this.props.paddingLeft +
+    this.props.paddingRight);
+  if (this.$canvas.clientWidth != width) {
+    this.$canvas.setAttribute('width', width);
   }
 
+  this.timedText.props.words = this.props.words;
+  this.timedText.props.scaleX = this._scaleX();
+  this.timedText.render();
 
-  if (this.props.transcript && (!this.props.transcript._key || widthChanged)) {
-    var transcript = this.$charts.append('g')
-      .attr('class', 'transcript');
+  this.waveform.props.waveform = this.props.waveform;
+  this.waveform.props.scaleX = this._scaleX();
+  this.waveform.render();
 
-    var goodWords = this.props.transcript.words.filter(function(word) {
-      return word.case === 'success';
-    });
+  this.pitchTrace.props.freqHz = this.props.freqHz;
+  this.pitchTrace.props.scaleX = this._scaleX();
+  this.pitchTrace.render();
 
-    transcript.selectAll('text')
-      .data(goodWords)
-      .enter()
-        .append('text')
-        .text(function(word) { return word.word; })
-        .attr('transform', function(word) {
-          var x = scaleX(word.start);
-          var y = 400;
-          return 'translate(' + x + ',' + y + ')';
-        });
-
-    // transcript.selectAll('g')
-    //   .data(goodWords)
-    //   .enter()
-    //     .append('g')
-    //     .attr('transform', function(word) {
-    //       var x = scaleX(word.start);
-    //       return 'translate(' + x + ', 0)';
-    //     })
-    //   .selectAll('text')
-    //   .data(function(word) {
-    //     var phones = [];
-    //     var start = 0;
-    //     for (var i = 0; i < word.phones.length; i++) {
-    //       var phone = word.phones[i];
-    //       phones.push([start, phone.phone]);
-    //       start += phone.duration;
-    //     }
-    //     return phones;
-    //   })
-    //     .enter()
-    //       .append('text')
-    //       .text(function(phone) {
-    //         return phone[1].split('_')[0];
-    //       })
-    //       .attr('style', 'font-size: 10px')
-    //       .attr('transform', function(phone) {
-    //         var x = scaleX(phone[0]) - paddingLeft;
-    //         return 'translate(' + x + ', 350)';
-    //       });
-
-    transcript.selectAll('line')
-      .data(goodWords)
-      .enter()
-        .append('line')
-        .attr('y1', 0)
-        .attr('y2', '100%')
-        .attr('transform', function(word) {
-          var x = scaleX(word.start);
-          return 'translate(' + x + ', 0)';
-        });
-
-    this.props.transcript._key = true;
-  }
-
-  
-  if (!this.props.waveform._key || widthChanged) {
-    var scaleWaveform = d3.scale.linear()
-      .domain([0, 1])
-      .clamp(true)
-      .range([0, 150]);
-
-    var barOverlap = 0.1;
-    this.$charts.append('line')
-      .attr('class', 'waveform-center')
-      .attr('x1', scaleX(0))
-      .attr('x2', scaleX(lengthSecs))
-      .attr('y1', 100)
-      .attr('y2', 100);
-
-    var bars = this.$charts.append('g')
-      .attr('class', 'waveform')
-      .selectAll('.bar');
-    bars = bars.data(this.props.waveform, function(val) {
-        return val[0];
-      });
-    var barGroup = bars.enter()
-      .append('g')
-        .attr('class', 'bar')
-        .attr('transform', function(val) {
-          var time = val[0], duration = val[1], peak = val[2];
-          var x = scaleX(time) - barOverlap;
-          var y = 0;
-          var width = scaleX(duration) - scaleX(0) + barOverlap * 2;
-          var height = 200;
-          var transform = 'translate(' + x + ',' + y + ')';
-          transform += ' scale(' + width + ',' + height + ')';
-          return transform;
-        });
-    barGroup.append('rect')
-      .attr('class', 'peak')
-      .attr('width', 1)
-      .attr('y', function(val) {
-        var peak = val[2];
-        return (1 - peak) / 2;
-      })
-      .attr('height', function(val) {
-        var peak = val[2];
-        return peak;
-      });
-    barGroup.append('rect')
-      .attr('class', 'rms')
-      .attr('width', 1)
-      .attr('y', function(val) {
-        var peak = val[2], rms = val[3];
-        var diff = peak - rms;
-        return (1 - rms) / 2;
-      })
-      .attr('height', function(val) {
-        var rms = val[3];
-        return rms;
-      });
-    bars.exit().remove();
-
-    this.props.waveform._key = true;
-  }
-
-  if (!this.props.freq_hz._key || widthChanged) {
-    var scalePitch = d3.scale.linear()
-      .domain([0, 255])
-      .range([150, 0]);
-    var pitchAxis = d3.svg.axis()
-      .orient('left')
-      .tickSize(0, 5)
-      .tickPadding(10)
-      .ticks(5)
-      .scale(scalePitch);
-    this.$scales.append('g')
-      .attr('transform', 'translate(50, 200)')
-      .call(pitchAxis);
-
-    var line = d3.svg.line()
-      .x(function(d) { return scaleX(d[0]); })
-      .y(function(d) { return scalePitch(d[1]) + 250; })
-
-    var pitches = this.$charts.append('g')
-      .attr('class', 'pitches');
-
-    pitches.append('path')
-      .attr('class', 'pitch-line')
-      .attr('d', line(this.props.freq_hz));
-
-    var dots = pitches.append('g')
-      .attr('class', 'dots')
-      .selectAll('circle')
-      .data(this.props.freq_hz, function(x) {
-        return x[0];
-      });
-    dots.enter().append('circle')
-      .attr('r', 1)
-      .attr('transform', function(x) {
-        var t = x[0];
-        var pitch = x[1];
-        var x = scaleX(t);
-        var y = scalePitch(pitch) + 250;
-        return 'translate(' + x + ',' + y + ')';
-      });
-    dots.exit().remove();
-
-    this.props.freq_hz._key = true;
-  }
+  this.playhead.props.currentTime = this.props.currentTime;
+  this.playhead.props.scaleX = this._scaleX();
+  this.playhead.render();
 };

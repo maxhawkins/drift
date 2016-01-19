@@ -5,7 +5,7 @@ function ViewPage() {
 
   var state = this.state = data;
   this.state.currentTime = 0;
-  this.state.zoom = 0.2;
+  this.state.zoom = 0.3;
 
   this._watchForUpdates();
 
@@ -21,7 +21,7 @@ function ViewPage() {
   $el.appendChild($title);
 
   var timeline = this.timeline = new Timeline();
-  timeline.onSeek = function(newTime) {
+  timeline.props.onSeek = function(newTime) {
     $audio.currentTime = newTime;
   };
   $el.appendChild(this.timeline.$el);
@@ -31,11 +31,11 @@ function ViewPage() {
   $downloadButton.className = 'download-button';
   $el.appendChild($downloadButton);
 
-  // var zoomBar = this.zoomBar = new ZoomBar();
-  // zoomBar.onchange = function(value) {
-  //   this.setState({zoom: value});
-  // }.bind(this);
-  // $el.appendChild(zoomBar.$el);
+  var zoomBar = this.zoomBar = new ZoomBar();
+  zoomBar.onchange = function(value) {
+    this.setState({zoom: value});
+  }.bind(this);
+  $el.appendChild(zoomBar.$el);
 
   var transcriptInput = this.transcriptInput = new TranscriptInput();
   $el.appendChild(transcriptInput.$el);
@@ -59,12 +59,13 @@ function ViewPage() {
   };
 
   function update(t) {
-    that.setState({currentTime: $audio.currentTime});
+    var newTime = $audio.currentTime;
+    if (that.state.currentTime != newTime) {
+      that.setState({currentTime: newTime});
+    }
     window.requestAnimationFrame(update);
   }
-  setTimeout(update, function() {
-    window.requestAnimationFrame(update);
-  }, 0);
+  window.setTimeout(update, 0);
 
   this.setState = this.setState.bind(this);
 }
@@ -80,27 +81,35 @@ ViewPage.prototype._watchForUpdates = function() {
   if (this.isWatching) {
     return;
   }
-  this.isWatching = true;
   if (this.state.status === 'DONE') {
     return;
   }
+  this.isWatching = true;
   var watcher = new SessionWatcher(this.state.id);
   watcher.watch(function(sess) {
+    // TODO(maxhawkins): fix jank caused by this update
     this.setState(sess);
-    if (sess.state === 'DONE') {
+    if (sess.status === 'DONE') {
       watcher.stop();
+      this.isWatching = false;
     }
   }.bind(this));
 }
 
 ViewPage.prototype.render = function() {
-  this.timeline.props = {
-    freq_hz: this.state.freq_hz,
-    waveform: this.state.waveform,
-    currentTime: this.state.currentTime,
-    zoom: this.state.zoom,
-    transcript: this.state.transcript,
-  };
+  var words = [];
+  var transcript = this.state.transcript;
+  if (transcript) {
+    words = transcript.words.filter(function(word) {
+      return word.case === 'success';
+    });
+  }
+
+  this.timeline.props.freqHz = this.state.freq_hz;
+  this.timeline.props.waveform = this.state.waveform;
+  this.timeline.props.currentTime = this.state.currentTime;
+  this.timeline.props.zoom = this.state.zoom;
+  this.timeline.props.words = words;
   this.timeline.render();
 
   this.$title.innerText = this.state.name;
