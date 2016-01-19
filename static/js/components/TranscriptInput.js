@@ -22,8 +22,16 @@ function TranscriptInput() {
     }
     e.preventDefault();
   }.bind(this), false);
+
+  this.render = this.render.bind(this);
+}
+
+TranscriptInput.prototype.setDisabled = function(isDisabled) {
+  this.$submit.disabled = isDisabled;
+  this.$textarea.disabled = isDisabled;
 }
 
 TranscriptInput.prototype.render = function() {
-
+  var isDone = this.props.status === 'DONE';
+  this.setDisabled(!isDone);
 };

@@ -23,6 +23,16 @@
 	height: 100px;
 	display: block;
 }
+.transcript-input textarea:disabled {
+    background: #FAFAFA;
+    color: #AAA;
+}
 .transcript-input input[type=submit] {
 	margin-top: 1em;
+}
+.transcript-input input[type=submit]:disabled:hover {
+    text-decoration: underline;
+}
+.transcript-input input[type=submit]:disabled {
+    color: #EEE;
 }

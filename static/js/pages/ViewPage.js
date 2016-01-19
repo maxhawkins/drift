@@ -35,13 +35,24 @@ function ViewPage() {
   // }.bind(this);
   // $el.appendChild(zoomBar.$el);
 
-  var transcriptInput = new TranscriptInput();
+  var transcriptInput = this.transcriptInput = new TranscriptInput();
   $el.appendChild(transcriptInput.$el);
   transcriptInput.onsubmit = function(text) {
+    that.setState({status: 'ALIGNING'});
     api.patch(that.state.id, {
       transcript: text
+    }).then(function(sess) {
+      that.setState(sess);
     });
-  }
+
+    var watcher = new SessionWatcher(that.state.id);
+    watcher.watch(function(sess) {
+      that.setState(sess);
+      if (sess.state === 'DONE') {
+        watcher.stop();
+      }
+    });
+  };
 
   var spaceListener = new KeyListener(32);
   spaceListener.onpress = function() {
@@ -87,4 +98,9 @@ ViewPage.prototype.render = function() {
     this.$downloadButton.href = href;
     this.setHref = true;
   }
+
+  this.transcriptInput.props = {
+    status: this.state.status,
+  };
+  this.transcriptInput.render();
 };
