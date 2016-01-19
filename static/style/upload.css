@@ -1,0 +1,37 @@
+.drag-target {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    width: 600px;
+    height: 200px;
+    background: white;
+    border: solid #ccc 1px;
+}
+.drag-target.active, .drag-target:hover {
+    cursor: pointer;
+    background: #EEE;
+}
+.select-files {
+    font-weight: bold;
+    font-size: 1.5em;
+    margin-bottom: 0.25em;
+}
+.upload-list {
+    margin-top: 2em;
+}
+.timestamp-header {
+    min-width: 80px;
+}
+.timestamp {
+    color: #999;
+}
+.name-header {
+    min-width: 200px;
+}
+.upload-list th {
+    padding: 5px;
+    text-align: left
+}
+.upload td {
+    padding: 5px;
+}

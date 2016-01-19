@@ -1,0 +1,27 @@
+body {
+    margin: 0;
+    padding: 15px;
+    padding-top: 85px;
+    color: black;
+    font-family: Helvetica, sans;
+    font-size: 10pt;
+}
+header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #333;
+    height: 60px;
+    padding-left: 15px;
+    width: 100%;
+    color: white;
+    line-height: 60px;
+}
+header a {
+    color: white;
+    text-decoration: none;
+}
+header h1 {
+    margin: 0;
+}
