@@ -71,7 +71,7 @@ ViewPage.prototype.setState = function(updates) {
 ViewPage.prototype.render = function() {
   this.timeline.props = {
     freq_hz: this.state.freq_hz,
-    amplitude: this.state.amplitude,
+    waveform: this.state.waveform,
     currentTime: this.state.currentTime,
     zoom: this.state.zoom,
     transcript: this.state.transcript,

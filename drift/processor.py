@@ -1,16 +1,12 @@
 from ellis.SAcC import SAcC
 from StringIO import StringIO
-import drift.ffmpeg as ffmpeg
 import ellis
 import time
-import array
-import wave
-import math
-import numpy as np
 import sys
 import traceback
-import requests
-import urlparse
+
+import drift.waveform as waveform
+import drift.ffmpeg as ffmpeg
 
 def transcribe(gentle_client, blob_store, sess, transcript):
 	try:
@@ -37,43 +33,6 @@ def get_pitches(wav_data):
         pitches.append([time, freq])
     return pitches
 
-def peaks_rms(data):
-	chunk_size_secs = 0.01
-	framerate = 8000
-	chunk_size_frames = math.ceil(chunk_size_secs * framerate)
-	chunk_count = math.ceil(float(len(data)) / chunk_size_frames)
-
-	output = []
-
-	chunks = np.array_split(data, chunk_count)
-	for i, chunk in enumerate(chunks):
-		start = i * chunk_size_secs
-		duration = (i + 1) * chunk_size_secs - start
-		peak = np.max(np.absolute(chunk))
-		rms = np.sqrt(np.mean(np.absolute(chunk) ** 2))
-		output.append([start, duration, peak, rms])
-
-	return output
-
-def get_waveform(blob_store, blob_id):
-	filename = blob_store.filename(blob_id)
-
-	data_str = ''
-	with open(filename, 'r') as f:
-		wav = wave.open(f, 'r')
-		if wav.getframerate() != 8000:
-			raise RuntimeError('wrong framerate %d' % wav.getframerate())
-		while True:
-			chunk = wav.readframes(1 << 15)
-			if len(chunk) == 0:
-				break
-			data_str += chunk
-
-	data = np.fromstring(data_str, dtype=np.int16).astype(np.float)
-	data /= (1<<15) - 1
-
-	return peaks_rms(data)
-
 def process(session, blob_store):
 	try:
 		original_file = blob_store.filename(session['original_id'])
@@ -85,8 +44,9 @@ def process(session, blob_store):
 		playback_id = blob_store.put(playback_wav)
 		session['playback_id'] = playback_id
 
-		waveform = get_waveform(blob_store, rec_id)
-		session['amplitude'] = waveform
+		rec_filename = blob_store.filename(rec_id)
+		wform = waveform.generate(rec_filename)
+		session['waveform'] = wform
 
 		pitches = get_pitches(wav)
 		session['freq_hz'] = pitches

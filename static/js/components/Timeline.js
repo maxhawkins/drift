@@ -1,7 +1,7 @@
 function Timeline() {
   this.props = {
     freq_hz: [],
-    amplitude: [],
+    waveform: [],
     currentTime: 0,
     zoom: 0,
   };
@@ -62,7 +62,7 @@ function timestamp(seconds) {
 }
 
 Timeline.prototype.render = function() {
-  var lengthSecs = d3.max(this.props.amplitude, function(x) {
+  var lengthSecs = d3.max(this.props.waveform, function(x) {
     var time = x[0];
     return time;
   });
@@ -90,18 +90,18 @@ Timeline.prototype.render = function() {
     });
   this.$staffLabel.text(timestamp(currentTime));
 
-  var amplitudePairs = [];
-  var amplitude = this.props.amplitude;
-  for (var i = 0; i < amplitude.length; i++) {
-    var time = amplitude[i][0];
-    var peak = amplitude[i][1];
-    var rms = amplitude[i][2];
+  var waveformPairs = [];
+  var waveform = this.props.waveform;
+  for (var i = 0; i < waveform.length; i++) {
+    var time = waveform[i][0];
+    var peak = waveform[i][1];
+    var rms = waveform[i][2];
     var lastTime = 0;
     if (i > 0) {
-      var lastTime = amplitude[i-1][0];
+      var lastTime = waveform[i-1][0];
     }
     var duration = time - lastTime;
-    amplitudePairs.push([lastTime, duration, peak, rms]);
+    waveformPairs.push([lastTime, duration, peak, rms]);
   }
 
 
@@ -169,24 +169,24 @@ Timeline.prototype.render = function() {
   }
 
   
-  if (!this.props.amplitude._key || widthChanged) {
-    var scaleAmplitude = d3.scale.linear()
+  if (!this.props.waveform._key || widthChanged) {
+    var scaleWaveform = d3.scale.linear()
       .domain([0, 1])
       .clamp(true)
       .range([0, 150]);
 
     var barOverlap = 0.1;
     this.$charts.append('line')
-      .attr('class', 'amplitude-center')
+      .attr('class', 'waveform-center')
       .attr('x1', scaleX(0))
       .attr('x2', scaleX(lengthSecs))
       .attr('y1', 100)
       .attr('y2', 100);
 
     var bars = this.$charts.append('g')
-      .attr('class', 'amplitude')
+      .attr('class', 'waveform')
       .selectAll('.bar');
-    bars = bars.data(this.props.amplitude, function(val) {
+    bars = bars.data(this.props.waveform, function(val) {
         return val[0];
       });
     var barGroup = bars.enter()
@@ -227,7 +227,7 @@ Timeline.prototype.render = function() {
       });
     bars.exit().remove();
 
-    this.props.amplitude._key = true;
+    this.props.waveform._key = true;
   }
 
   if (!this.props.freq_hz._key || widthChanged) {

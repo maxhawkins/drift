@@ -46,14 +46,14 @@
     fill: none;
     display: none;
 }
-.timeline .amplitude-center {
+.timeline .waveform-center {
     stroke: #EAEAEA;
     stroke-width 1px;
 }
-.timeline .amplitude .peak {
+.timeline .waveform .peak {
 	fill: #999;
 }
-.timeline .amplitude .rms {
+.timeline .waveform .rms {
 	fill: #777;
 }
 .timeline .transcript line {
