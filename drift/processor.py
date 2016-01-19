@@ -9,6 +9,7 @@ def transcribe(gentle_client, blob_store, sess, transcript):
 		wav = blob_store.get(sess['recording_id'])
 		result = gentle_client.transcribe(wav, transcript)
 		sess['transcript'] = result
+		sess['status'] = 'DONE'
 		return sess
 	except Exception, e:
 		sess['status'] = 'ERROR'
