@@ -1,0 +1,86 @@
+function ViewPage() {
+  var that = this;
+
+  var state = this.state = data;
+  this.state.currentTime = 0;
+  this.state.zoom = 0.2;
+
+  var $el = this.$el = document.createElement('div');
+  
+  var $audio = this.$audio = document.createElement('audio');
+  $audio.type = 'audio/wav';
+  $audio.src = '/blobs/' + data.playback_id;
+  $el.appendChild($audio);
+
+  var timeline = this.timeline = new Timeline();
+  timeline.onSeek = function(newTime) {
+    $audio.currentTime = newTime;
+  };
+  $el.appendChild(this.timeline.$el);
+
+  var $downloadButton = this.$downloadButton = document.createElement('a');
+  $downloadButton.innerText = 'Download CSV';
+  $downloadButton.className = 'download-button';
+  $el.appendChild($downloadButton);
+
+  // var zoomBar = this.zoomBar = new ZoomBar();
+  // zoomBar.onchange = function(value) {
+  //   this.setState({zoom: value});
+  // }.bind(this);
+  // $el.appendChild(zoomBar.$el);
+
+  window.addEventListener('keydown', function(e) {
+    if (e.keyCode == 32) {
+      if ($audio.paused) {
+        $audio.play();
+      } else {
+        $audio.pause();
+      }
+    }
+  }, false);
+// // window.onkeydown = function(ev) {
+// //     if(ev.keyCode == 32) {      // space bar
+// //         ev.preventDefault();
+// //         if($a.paused) {
+// //             $a.play();
+// //         }
+// //         else {
+// //             $a.pause();
+// //         }
+// //     }
+// // }
+
+  function update(t) {
+    that.setState({currentTime: $audio.currentTime});
+    window.requestAnimationFrame(update);
+  }
+  setTimeout(update, function() {
+    window.requestAnimationFrame(update);
+  }, 0);
+
+  this.setState = this.setState.bind(this);
+}
+
+ViewPage.prototype.setState = function(updates) {
+  for (k in updates) {
+    this.state[k] = updates[k];
+  }
+  this.render();
+}
+
+ViewPage.prototype.render = function() {
+  this.timeline.props = {
+    freq_hz: this.state.freq_hz,
+    amplitude: this.state.amplitude,
+    currentTime: this.state.currentTime,
+    zoom: this.state.zoom,
+    transcript: this.state.transcript,
+  };
+  this.timeline.render();
+
+  var href = this.state.id + '.csv';
+  if (!this.setHref) {
+    this.$downloadButton.href = href;
+    this.setHref = true;
+  }
+};

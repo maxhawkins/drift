@@ -1,0 +1,88 @@
+.timeline {
+    background-color: white;
+    position: relative;
+    overflow-y: hidden;
+    margin: 2em -15px;
+    height: 450px;
+    cursor: text;
+}
+.timeline .scales {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 70px;
+    background: linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(0,0,0,0) 100%);
+}
+.timeline .scales .domain {
+	fill: none;
+	stroke: #333;
+	stroke-width: 1px;
+}
+.timeline .inner {
+    overflow-x: scroll;
+}
+.timeline .staff {
+	stroke: red;
+	stroke-width: 1;
+}
+.timeline .staff text {
+    stroke: none;
+    fill: red;
+    font-size: 12px;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.timeline .dots {
+	fill: #555;
+}
+.timeline .pitch-line {
+    stroke: #FAFAFA;
+    stroke-width: 1;
+    fill: none;
+    display: none;
+}
+.timeline .amplitude-center {
+    stroke: #EAEAEA;
+    stroke-width 1px;
+}
+.timeline .amplitude .peak {
+	fill: #999;
+}
+.timeline .amplitude .rms {
+	fill: #777;
+}
+.timeline .transcript line {
+    stroke: #EEE;
+    stroke-width: 1px;
+    stroke-dasharray: 5, 5;
+    user-select: none;
+}
+.zoom {
+    display: inline-block;
+    line-height: 2em;
+    width: 200px;
+    height: 44px;
+    background: #eee;
+    text-align: center;
+    line-height: 45px;
+    border: solid #ccc 1px;
+    -webkit-user-select: none;
+    cursor: text;
+    float: right;
+}
+.download-button {
+    display: inline-block;
+    margin-right: 15px;
+    padding: 15px 30px;
+    color: black;
+    text-decoration: none;
+    border: solid #ccc 1px;
+}
+.download-button:hover {
+    text-decoration: underline;
+}

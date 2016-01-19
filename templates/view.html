@@ -1,11 +1,24 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>drift</title>
-    <link rel="stylesheet" href="/style/app.css">
+    <title>drift : view</title>
+    <link rel="stylesheet" href="/static/style/app.css">
+    <link rel="stylesheet" href="/static/style/timeline.css">
   </head>
   <body>
-  	<div id="status">Loading...</div>
-    <script src="/js/app.js"></script>
+	<header>
+		<h1><a href="/sessions">Drift</a></h1>
+	</header>
+  	
+  	<div id="main"></div>
+
+  	<script>
+  	var data = {% raw data %};
+  	</script>
+    <script src="/static/js/third_party/d3.js"></script>
+    <script src="/static/js/components/Timeline.js"></script>
+    <script src="/static/js/components/ZoomBar.js"></script>
+    <script src="/static/js/pages/ViewPage.js"></script>
+    <script src="/static/js/view.js"></script>
   </body>
 </html>
