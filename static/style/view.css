@@ -6,6 +6,7 @@
     text-decoration: none;
     border: solid #ccc 1px;
     background: white;
+    font-size: 14px;
 }
 .download-button:hover, .transcript-input input[type=submit]:hover {
     text-decoration: underline;
