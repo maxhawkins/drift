@@ -6,10 +6,15 @@ function Upload(file) {
   this.timestamp = new Date(Date.now());
 }
 
+Upload.prototype.update = function(changes) {
+  for (k in changes) {
+    this[k] = changes[k];
+  }
+}
+
 function Uploader() {
   this.queue = [];
   this.active = 0;
-  this.sessionAPI = new SessionAPI();
   this.uploadAPI = new UploadAPI();
 
   this._work = this._work.bind(this);
@@ -43,45 +48,27 @@ Uploader.prototype._work = function() {
   upload.status = 'UPLOADING';
   this._notify();
 
-  var checkStatus = function() {
-    return that.sessionAPI.get(upload.id).then(function(result) {
-      for (k in result) {
-        upload[k] = result[k];
-      }
-      that._notify();
-      if (upload.status === 'ERROR') {
-        console.error(upload.error);
-        return upload
-      }
-      if (upload.status === 'DONE') {
-        return upload;
-      }
-  
-      return new Promise(function(resolve, reject) {
-        setTimeout(function() {
-          checkStatus().then(resolve, reject);
-        }, 500);
-      });
-    })
-  }
-  
-
+  var watcher = null;
 
   var that = this;
   this.uploadAPI.post(upload.file).then(function(result) {
-    for (k in result) {
-      upload[k] = result[k];
-    }
+    upload.update(result);
     upload.file = null;
     that._notify();
 
-    return checkStatus();
+    watcher = new SessionWatcher(upload.id);
+    watcher.watch(function(changed) {
+      upload.update(changed);
+      that._notify();
+    });
+
+    return watcher.awaitStatus('DONE');
   }, function(err) {
-    console.log(err);
+    console.error(err);
     upload.status = 'UPLOAD_ERROR';
     that._notify();
   }).then(function() {
-    console.log('done');
+    watcher.stop();
     that.active -= 1;
     window.setTimeout(that._work, 0);
   });
