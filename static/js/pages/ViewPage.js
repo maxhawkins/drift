@@ -14,6 +14,10 @@ function ViewPage() {
   $audio.src = '/blobs/' + data.playback_id;
   $el.appendChild($audio);
 
+
+  var $title = this.$title = document.createElement('h2');
+  $el.appendChild($title);
+
   var timeline = this.timeline = new Timeline();
   timeline.onSeek = function(newTime) {
     $audio.currentTime = newTime;
@@ -76,6 +80,8 @@ ViewPage.prototype.render = function() {
     transcript: this.state.transcript,
   };
   this.timeline.render();
+
+  this.$title.innerText = this.state.name;
 
   var href = this.state.id + '.csv';
   if (!this.setHref) {
