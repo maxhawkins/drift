@@ -1,1 +1,6 @@
-twisted~=15.5.0
+tornado
+pickledb
+numpy
+scipy
+simplejson
+requests
