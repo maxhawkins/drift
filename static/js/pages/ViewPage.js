@@ -43,15 +43,14 @@ function ViewPage() {
     });
   }
 
-  window.addEventListener('keydown', function(e) {
-    if (e.keyCode == 32) {
-      if ($audio.paused) {
-        $audio.play();
-      } else {
-        $audio.pause();
-      }
+  var spaceListener = new KeyListener(32);
+  spaceListener.onpress = function() {
+    if ($audio.paused) {
+      $audio.play();
+    } else {
+      $audio.pause();
     }
-  }, false);
+  };
 
   function update(t) {
     that.setState({currentTime: $audio.currentTime});
