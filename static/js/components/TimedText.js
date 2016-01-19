@@ -65,9 +65,10 @@ TimedText.prototype._update = function() {
 };
 
 TimedText.prototype.render = function() {
-  if (this.props.scaleX !== this.lastScaleX) {
+  if (this.props.scaleX !== this.lastScaleX || this.props.words.length != this.wordCount) {
     this._update();
     this.props.words._calculated = true;
     this.lastScaleX = this.props.scaleX;
+    this.wordCount = this.props.words.length
   }
 };
