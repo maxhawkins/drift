@@ -14,7 +14,10 @@ class SessionHandler(tornado.web.RequestHandler):
         self.blob_store = blob_store
     def get(self, path):
         id, ext = os.path.splitext(path)
-        sess = self.db.get_session(id)
+        try:
+            sess = self.db.get_session(id)
+        except KeyError, e:
+            raise tornado.web.HTTPError(404)
         sessJSON = session.marshal_json(sess)
         if ext == '':
             return self.render('../templates/view.html', data=sessJSON)
