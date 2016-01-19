@@ -10,6 +10,7 @@ function FileDialog() {
     if (this.onchoose) {
       this.onchoose(this.$el.files);
     }
+    this.$el.value = '';
   }).bind(this), false);
 }
 
