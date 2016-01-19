@@ -1,6 +1,8 @@
 function ViewPage() {
   var that = this;
 
+  var api = new SessionAPI();
+
   var state = this.state = data;
   this.state.currentTime = 0;
   this.state.zoom = 0.2;

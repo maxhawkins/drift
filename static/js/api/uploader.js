@@ -6,52 +6,10 @@ function Upload(file) {
   this.timestamp = new Date(Date.now());
 }
 
-function UploadAPI(baseURI) {
-  this.baseURI = baseURI || '';
-}
-
-UploadAPI.prototype.get = function(session_id) {
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", this.baseURI + "/sessions/" + session_id + '.json', true);
-  return new Promise(function(resolve, reject) {
-    xhr.onerror = reject;
-    xhr.onload = function(e) {
-      if (xhr.status < 200 || xhr.status >= 300) {
-        reject(xhr.responseText);
-        return;
-      }
-      var resp = JSON.parse(xhr.responseText);
-      resolve(resp);
-    }
-    xhr.send(null);
-  });
-}
-
-UploadAPI.prototype.post = function(file) {
-  var form = new FormData();
-  form.append('file', file);
-
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", this.baseURI + "/sessions", true);
-
-  return new Promise(function(resolve, reject) {
-    xhr.onerror = reject;
-    xhr.onload = function(e) {
-      if (xhr.status < 200 || xhr.status >= 300) {
-        reject(xhr.responseText);
-        return;
-      }
-      var resp = JSON.parse(xhr.responseText);
-      resolve(resp);
-    };
-    xhr.send(form);
-  });
-}
-
 function Uploader() {
   this.queue = [];
   this.active = 0;
-  this.api = new UploadAPI();
+  this.api = new SessionAPI();
 
   this._work = this._work.bind(this);
 }
@@ -97,7 +55,7 @@ Uploader.prototype._work = function() {
       if (upload.status === 'DONE') {
         return upload;
       }
-
+  
       return new Promise(function(resolve, reject) {
         setTimeout(function() {
           checkStatus().then(resolve, reject);
@@ -105,6 +63,8 @@ Uploader.prototype._work = function() {
       });
     })
   }
+  
+
 
   var that = this;
   this.api.post(upload.file).then(function(result) {
