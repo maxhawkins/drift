@@ -1,6 +1,6 @@
 function KeyListener(keyCode) {
   this.keyCode = keyCode;
-  document.addEventListener('keyup', this._handle.bind(this), false);
+  document.addEventListener('keydown', this._handle.bind(this), false);
 }
 
 KeyListener.prototype._handle = function(e) {
