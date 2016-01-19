@@ -49,7 +49,7 @@ class SessionHandler(tornado.web.RequestHandler):
 
         return self.write(session.marshal_json(sess))
 
-class SessionsHandler(tornado.web.RequestHandler):
+class UploadHandler(tornado.web.RequestHandler):
     def initialize(self, blob_store, db, pool):
         self.blob_store = blob_store
         self.db = db

@@ -7,7 +7,7 @@ from multiprocessing import Pool
 import drift.gentle
 from drift.blobstore import BlobStore
 from drift.db import DB
-from drift.handlers import SessionHandler, SessionsHandler, BlobHandler
+from drift.handlers import SessionHandler, UploadHandler, BlobHandler
 
 def make_app(db, blob_store, pool, gentle_client):
     settings = {
@@ -15,8 +15,8 @@ def make_app(db, blob_store, pool, gentle_client):
         'debug': True,
     }
     handlers = [
-        (r"/", tornado.web.RedirectHandler, {"url": "/sessions"}),
-        (r"/sessions", SessionsHandler, dict(db=db, blob_store=blob_store, pool=pool)),
+        (r"/", tornado.web.RedirectHandler, {"url": "/upload", "permanent": False}),
+        (r"/upload", UploadHandler, dict(db=db, blob_store=blob_store, pool=pool)),
         (r"/sessions/([^/]+)", SessionHandler, dict(db=db, pool=pool, blob_store=blob_store, gentle_client=gentle_client)),
         (r"/blobs/(.+)", BlobHandler, {"path": blob_store.base_folder})
     ]

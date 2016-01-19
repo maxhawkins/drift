@@ -9,7 +9,8 @@ function Upload(file) {
 function Uploader() {
   this.queue = [];
   this.active = 0;
-  this.api = new SessionAPI();
+  this.sessionAPI = new SessionAPI();
+  this.uploadAPI = new UploadAPI();
 
   this._work = this._work.bind(this);
 }
@@ -43,7 +44,7 @@ Uploader.prototype._work = function() {
   this._notify();
 
   var checkStatus = function() {
-    return that.api.get(upload.id).then(function(result) {
+    return that.sessionAPI.get(upload.id).then(function(result) {
       for (k in result) {
         upload[k] = result[k];
       }
@@ -67,7 +68,7 @@ Uploader.prototype._work = function() {
 
 
   var that = this;
-  this.api.post(upload.file).then(function(result) {
+  this.uploadAPI.post(upload.file).then(function(result) {
     for (k in result) {
       upload[k] = result[k];
     }
