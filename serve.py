@@ -15,6 +15,7 @@ def make_app(db, blob_store, pool, gentle_client):
         'debug': True,
     }
     handlers = [
+        (r"/", tornado.web.RedirectHandler, {"url": "/sessions"}),
         (r"/sessions", SessionsHandler, dict(db=db, blob_store=blob_store, pool=pool)),
         (r"/sessions/([^/]+)", SessionHandler, dict(db=db, pool=pool, blob_store=blob_store, gentle_client=gentle_client)),
         (r"/blobs/(.+)", BlobHandler, {"path": blob_store.base_folder})
