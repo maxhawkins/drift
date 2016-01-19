@@ -75,14 +75,3 @@
     cursor: text;
     float: right;
 }
-.download-button {
-    display: inline-block;
-    margin-right: 15px;
-    padding: 15px 30px;
-    color: black;
-    text-decoration: none;
-    border: solid #ccc 1px;
-}
-.download-button:hover {
-    text-decoration: underline;
-}

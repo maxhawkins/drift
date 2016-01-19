@@ -31,6 +31,14 @@ function ViewPage() {
   // }.bind(this);
   // $el.appendChild(zoomBar.$el);
 
+  var transcriptInput = new TranscriptInput();
+  $el.appendChild(transcriptInput.$el);
+  transcriptInput.onsubmit = function(text) {
+    api.patch(that.state.id, {
+      transcript: text
+    });
+  }
+
   window.addEventListener('keydown', function(e) {
     if (e.keyCode == 32) {
       if ($audio.paused) {
@@ -40,17 +48,6 @@ function ViewPage() {
       }
     }
   }, false);
-// // window.onkeydown = function(ev) {
-// //     if(ev.keyCode == 32) {      // space bar
-// //         ev.preventDefault();
-// //         if($a.paused) {
-// //             $a.play();
-// //         }
-// //         else {
-// //             $a.pause();
-// //         }
-// //     }
-// // }
 
   function update(t) {
     that.setState({currentTime: $audio.currentTime});

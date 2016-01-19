@@ -1,0 +1,27 @@
+.download-button, .transcript-input input[type=submit] {
+    display: inline-block;
+    margin-right: 15px;
+    padding: 15px 30px;
+    color: black;
+    text-decoration: none;
+    border: solid #ccc 1px;
+    background: white;
+}
+.download-button:hover, .transcript-input input[type=submit]:hover {
+    text-decoration: underline;
+}
+.download-button:active, .transcript-input input[type=submit]:active {
+	background: #EEE;
+}
+.transcript-input {
+	margin: 2em 0;
+}
+.transcript-input textarea {
+	width: 100%;
+	max-width: 500px;
+	height: 100px;
+	display: block;
+}
+.transcript-input input[type=submit] {
+	margin-top: 1em;
+}
