@@ -7,6 +7,8 @@ function ViewPage() {
   this.state.currentTime = 0;
   this.state.zoom = 0.2;
 
+  this._watchForUpdates();
+
   var $el = this.$el = document.createElement('div');
   
   var $audio = this.$audio = document.createElement('audio');
@@ -44,14 +46,7 @@ function ViewPage() {
     }).then(function(sess) {
       that.setState(sess);
     });
-
-    var watcher = new SessionWatcher(that.state.id);
-    watcher.watch(function(sess) {
-      that.setState(sess);
-      if (sess.state === 'DONE') {
-        watcher.stop();
-      }
-    });
+    that._watchForUpdates();
   };
 
   var spaceListener = new KeyListener(32);
@@ -79,6 +74,23 @@ ViewPage.prototype.setState = function(updates) {
     this.state[k] = updates[k];
   }
   this.render();
+}
+
+ViewPage.prototype._watchForUpdates = function() {
+  if (this.isWatching) {
+    return;
+  }
+  this.isWatching = true;
+  if (this.state.status === 'DONE') {
+    return;
+  }
+  var watcher = new SessionWatcher(this.state.id);
+  watcher.watch(function(sess) {
+    this.setState(sess);
+    if (sess.state === 'DONE') {
+      watcher.stop();
+    }
+  }.bind(this));
 }
 
 ViewPage.prototype.render = function() {
