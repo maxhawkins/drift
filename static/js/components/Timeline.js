@@ -33,8 +33,8 @@ function Timeline() {
   $charts.appendChild(timedText.$el);
 
   var waveform = this.waveform = new Waveform();
-  waveform.props.scaleY = 100;
-  waveform.$el.setAttribute('transform', 'translate(0, 100) scale(1, -1)');
+  waveform.props.height = 100;
+  waveform.$el.setAttribute('transform', 'translate(0, 70)');
   $charts.appendChild(waveform.$el);
 
   var pitchTrace = this.pitchTrace = new PitchTrace();
