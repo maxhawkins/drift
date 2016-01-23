@@ -13,4 +13,6 @@ RUN apt-get update && \
 
 RUN cd /drift && pip install -r requirements.txt
 
-CMD cd /drift && python2 serve.py
+CMD cd /drift && python2 serve.py \
+	--db_path /drift/db/app.db \
+	--blob_folder /drift/uploads
