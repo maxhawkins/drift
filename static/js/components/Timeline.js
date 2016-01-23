@@ -7,10 +7,16 @@ function Timeline() {
     zoom: 0,
     paddingLeft: 60,
     paddingRight: 60,
+    minPitch: 50,
+    maxPitch: 400,
   };
 
   var $el = this.$el = document.createElement('div');
   $el.className = 'timeline';
+
+  var $scales = this.$scales = document.createElement('div');
+  $scales.className = 'scales';
+  $el.appendChild($scales);
 
   var $scroll = this.$scroll = document.createElement('div');
   $scroll.className = 'scroll';
@@ -29,7 +35,7 @@ function Timeline() {
   $canvas.appendChild($charts);
 
   var timedText = this.timedText = new TimedText();
-  timedText.$el.setAttribute('transform', 'translate(0, 400)');
+  timedText.$el.setAttribute('transform', 'translate(0, 380)');
   $charts.appendChild(timedText.$el);
 
   var waveform = this.waveform = new Waveform();
@@ -38,9 +44,16 @@ function Timeline() {
   $charts.appendChild(waveform.$el);
 
   var pitchTrace = this.pitchTrace = new PitchTrace();
-  pitchTrace.props.scaleY = 150;
-  pitchTrace.$el.setAttribute('transform', 'translate(0, 100)');
+  pitchTrace.props.height = 200;
+  pitchTrace.$el.setAttribute('transform', 'translate(0, 140)');
   $charts.appendChild(pitchTrace.$el);
+
+  var pitchScale = this.pitchScale = new PitchScale();
+  pitchScale.props.height = 200;
+  pitchScale.$el.style['position'] = 'absolute';
+  pitchScale.$el.style['top'] = 140;
+  pitchScale.$el.style['left'] = 5;
+  $scales.appendChild(pitchScale.$el);
 
   var playhead = this.playhead = new Playhead();
   $charts.appendChild(playhead.$el);
@@ -88,4 +101,6 @@ Timeline.prototype.render = function() {
   this.playhead.props.currentTime = this.props.currentTime;
   this.playhead.props.scaleX = this._scaleX();
   this.playhead.render();
+
+  this.pitchScale.render();
 };

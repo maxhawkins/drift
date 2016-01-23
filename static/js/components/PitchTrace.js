@@ -2,7 +2,9 @@ function PitchTrace() {
   this.props = {
     freqHz: [],
     scaleX: 1,
-    scaleY: 1,
+    minPitch: 50,
+    maxPitch: 400,
+    height: 300,
   };
 
   var $el = this.$el = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -26,7 +28,8 @@ PitchTrace.prototype._updateShape = function() {
     }
 
     var x = this.props.scaleX * time;
-    var y = this.props.scaleY * (400 - freq) / 200;
+    var yScale = this.props.height / (this.props.minPitch - this.props.maxPitch);
+    var y = (freq - this.props.maxPitch) * yScale;
     var transform = 'translate(' + x + ',' +  y + ')';
     circle.setAttribute('transform', transform);
   }

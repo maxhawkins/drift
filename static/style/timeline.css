@@ -3,15 +3,24 @@
     position: relative;
     overflow-y: hidden;
     margin: 2em -15px;
-    height: 450px;
+    height: 420px;
     cursor: text;
 }
 .timeline .scales {
     position: absolute;
     top: 0;
+    bottom: 0;
     left: 0;
     width: 70px;
     background: linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(0,0,0,0) 100%);
+    pointer-events: none;
+    font-size: 12px;
+}
+.timeline .scales .tick {
+    stroke: black;
+}
+.timeline .scales .bar {
+    stroke: black;
 }
 .timeline .scales .domain {
 	fill: none;
