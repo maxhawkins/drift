@@ -1,6 +1,7 @@
 import logging
 import tornado.ioloop
 import tornado.web
+import sys
 
 from multiprocessing import Pool
 
@@ -43,6 +44,11 @@ def main():
     db = DB(args.db_path)
     pool = Pool(args.pool_size)
     gentle_client = drift.gentle.Client(args.gentle_url)
+
+    if not gentle_client.ping():
+        logging.error(
+            'failed to contact Gentle at %s', args.gentle_url)
+        sys.exit(1)
 
     app = make_app(db, blob_store, pool, gentle_client)
     logging.info('listening at :%d', args.port)
