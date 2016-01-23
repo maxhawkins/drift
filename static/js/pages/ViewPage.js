@@ -6,6 +6,7 @@ function ViewPage() {
   var state = this.state = data;
   this.state.currentTime = 0;
   this.state.zoom = 0.3;
+  this.state.playing = false;
 
   this._watchForUpdates();
 
@@ -63,6 +64,10 @@ function ViewPage() {
     if (that.state.currentTime != newTime) {
       that.setState({currentTime: newTime});
     }
+    var playing = !$audio.paused;
+    if (that.state.playing != playing) {
+      that.setState({playing: playing});
+    }
     window.requestAnimationFrame(update);
   }
   window.setTimeout(update, 0);
@@ -108,6 +113,7 @@ ViewPage.prototype.render = function() {
   this.timeline.props.freqHz = this.state.freq_hz;
   this.timeline.props.waveform = this.state.waveform;
   this.timeline.props.currentTime = this.state.currentTime;
+  this.timeline.props.playing = this.state.playing;
   this.timeline.props.zoom = this.state.zoom;
   this.timeline.props.words = words;
   this.timeline.render();

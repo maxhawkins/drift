@@ -4,6 +4,7 @@ function Timeline() {
     waveform: [],
     words: [],
     currentTime: 0,
+    playing: false,
     zoom: 0,
     paddingLeft: 60,
     paddingRight: 60,
@@ -73,6 +74,18 @@ Timeline.prototype._handleClick = function(e) {
   }
 };
 
+Timeline.prototype._isInScroll = function(t) {
+  var x = this._scaleX() * t;
+  var left = this.$scroll.scrollLeft - this.props.paddingLeft;
+  var right = left + this.$scroll.clientWidth;
+  return x >= left && x <= right;
+};
+
+Timeline.prototype._scrollTo = function(t) {
+  var x = this._scaleX() * t + this.props.paddingLeft;
+  this.$scroll.scrollLeft = x;
+};
+
 Timeline.prototype.render = function() {
   var waveform = this.props.waveform;
   var lastSample = waveform[waveform.length - 1];
@@ -103,4 +116,11 @@ Timeline.prototype.render = function() {
   this.playhead.render();
 
   this.pitchScale.render();
+
+  // TODO(maxhawkins): extract this scroll logic into
+  // its own component.
+  if (this.props.playing &&
+      !this._isInScroll(this.props.currentTime)) {
+    this._scrollTo(this.props.currentTime);
+  }
 };
