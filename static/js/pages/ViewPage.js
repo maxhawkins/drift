@@ -118,6 +118,9 @@ ViewPage.prototype.render = function() {
   this.timeline.props.words = words;
   this.timeline.render();
 
+  this.zoomBar.props.amount = this.state.zoom;
+  this.zoomBar.render();
+
   this.$title.innerText = this.state.name;
 
   var href = this.state.id + '.csv';

@@ -36,3 +36,27 @@
 .transcript-input input[type=submit]:disabled {
     color: #EEE;
 }
+.zoom {
+    display: inline-block;
+    line-height: 2em;
+    width: 200px;
+    height: 44px;
+    background: #eee;
+    text-align: center;
+    line-height: 45px;
+    border: solid #ccc 1px;
+    -webkit-user-select: none;
+    cursor: text;
+    float: right;
+    position: relative;
+}
+.zoom .label {
+    cursor: text;
+    position: relative;
+    z-index: 2;
+}
+.zoom .indicator {
+    height: 100%;
+    background: #999;
+    position: absolute;
+}
