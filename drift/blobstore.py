@@ -4,6 +4,8 @@ import os
 class BlobStore(object):
 	def __init__(self, base_folder):
 		self.base_folder = base_folder
+                if not os.path.exists(base_folder):
+                        os.makedirs(base_folder)
 	def put(self, data):
 		id = 'sha1-' + hashlib.sha1(data).hexdigest()
 		dest_path = os.path.join(self.base_folder, id)
