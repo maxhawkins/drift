@@ -78,5 +78,6 @@ class UploadHandler(tornado.web.RequestHandler):
 
 class BlobHandler(tornado.web.StaticFileHandler):
     def get(self, path, include_body=True):
+        key, ext = os.path.splitext(path)
         self.set_header('Content-Disposition', 'attachment')
-        return tornado.web.StaticFileHandler.get(self, path, include_body)
+        return tornado.web.StaticFileHandler.get(self, key, include_body)
