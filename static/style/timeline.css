@@ -12,7 +12,7 @@
     bottom: 0;
     left: 0;
     width: 70px;
-    background: linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(0,0,0,0) 100%);
+    background: linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
     pointer-events: none;
     font-size: 12px;
 }
@@ -48,7 +48,7 @@
 }
 .timeline .waveform .rule {
     stroke: #EAEAEA;
-    stroke-width 1px;
+    stroke-width:; 1px;
 }
 .timeline .waveform .peak {
 	fill: #999;
