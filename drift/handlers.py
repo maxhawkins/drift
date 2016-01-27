@@ -18,12 +18,12 @@ class SessionHandler(tornado.web.RequestHandler):
             sess = self.db.get_session(id)
         except KeyError, e:
             raise tornado.web.HTTPError(404)
-        sessJSON = session.marshal_json(sess)
+        respJSON = '{"session": %s}' % session.marshal_json(sess)
         if ext == '':
-            return self.render('../templates/view.html', data=sessJSON)
+            return self.render('../templates/view.html', data=respJSON)
         elif ext == '.json':
             self.set_header('Content-Type', 'text/json')
-            return self.write(sessJSON)
+            return self.write(respJSON)
         elif ext == '.csv':
             self.set_header('Content-Type', 'text/csv')
             self.set_header('Content-Disposition', 'attachment; filename=%s.csv' % id)

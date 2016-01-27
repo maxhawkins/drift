@@ -3,7 +3,7 @@ function ViewPage() {
 
   var api = new SessionAPI();
 
-  var state = this.state = data;
+  var state = this.state = data.session;
   this.state.currentTime = 0;
   this.state.zoom = 0.3;
   this.state.playing = false;

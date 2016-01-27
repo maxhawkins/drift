@@ -13,7 +13,7 @@ SessionAPI.prototype.get = function(session_id) {
         return;
       }
       var resp = JSON.parse(xhr.responseText);
-      resolve(resp);
+      resolve(resp.session);
     }
     xhr.send(null);
   });
