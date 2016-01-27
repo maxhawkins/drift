@@ -46,12 +46,12 @@
     line-height: 45px;
     border: solid #ccc 1px;
     -webkit-user-select: none;
-    cursor: text;
+    cursor: col-resize;
     float: right;
     position: relative;
 }
 .zoom .label {
-    cursor: text;
+    cursor: col-resize;
     position: relative;
     z-index: 2;
 }
