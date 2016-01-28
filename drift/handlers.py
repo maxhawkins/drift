@@ -18,10 +18,23 @@ class SessionHandler(tornado.web.RequestHandler):
             sess = self.db.get_session(id)
         except KeyError, e:
             raise tornado.web.HTTPError(404)
+
         respJSON = '{"session": %s}' % session.marshal_json(sess)
         if ext == '':
             return self.render('../templates/view.html', data=respJSON)
         elif ext == '.json':
+
+            # HACK(maxhawkins): This sideload paramter is a temporary measure.
+            # Later these heavy resources should be stored separately
+            # from the session object. This will allow more efficient
+            # storage and caching. For now, though, we can save bandwidth
+            # by not sending them unless they're explicitly requested.
+            to_sideload = self.get_arguments('sideload')
+            if 'freq_hz' in sess and not 'freq_hz' in to_sideload:
+                del sess['freq_hz']
+            if 'waveform' in sess and not 'waveform' in to_sideload:
+                del sess['waveform']
+
             self.set_header('Content-Type', 'text/json')
             return self.write(respJSON)
         elif ext == '.csv':
