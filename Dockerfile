@@ -1,17 +1,20 @@
-FROM python:2.7
+FROM ubuntu:15.04
+
+RUN DEBIAN_FRONTEND=noninteractive && \
+	apt-get update && \
+	apt-get install -y  \
+		python-pip python-numpy \
+		python-scipy python-pip && \
+	apt-get clean
 
 ADD . /drift
+
+RUN cd /drift && pip install -r requirements.txt
 
 VOLUME /drift/uploads
 VOLUME /drift/db
 
 EXPOSE 9876
-
-RUN apt-get update && \
-	 apt-get install -y libblas-dev liblapack-dev libatlas-base-dev gfortran ffmpeg && \
-	 apt-get clean
-
-RUN cd /drift && pip install -r requirements.txt
 
 CMD cd /drift && python2 serve.py \
 	--db_path /drift/db/app.db \
