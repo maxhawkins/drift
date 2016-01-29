@@ -1,29 +1,29 @@
-drift: pitch tracker explorer
-(based on Dan Ellis's Subband PCA feature calculation)
+# Drift
+**Pitch tracker explorer**
 
+![Alpha](https://img.shields.io/badge/status-alpha-red.svg)
+[![Build Status](https://img.shields.io/travis/lowerquality/drift.svg)](https://travis-ci.org/lowerquality/drift)
 
-Installation notes -
+This project is under heavy development and not ready for use. Things will break!
 
+## Installing
+
+First, have an instance of [Gentle](https://github.com/lowerquality/gentle) running. Follow the instructions on the Gentle page.
+
+Then grab the dependencies for Drift and run it:
+
+```
+apt-get install ffmpeg
 pip install -r requirements.txt
+python serve.py --gentle_url <url for your gentle instance>
+```
 
+By default the server listens at http://localhost:9876.
 
-For system python and pip numpy, I had to change the `calc_sbpca/python/Makefile` to:
+## How It Works
 
-PYDIR=/Library
-NUMPYDIR=/Library/Python/2.7/site-packages/numpy
+This project makes it easy to see the [F0 pitch](https://en.wikipedia.org/wiki/Fundamental_frequency) of your audio recordings.
 
-CFLAGS=-I${PYDIR}/Frameworks/Python.framework/Versions/2.7/include/python2.7 -I${NUMPYDIR}/core/include/numpy
+It uses the Python version of Dan Ellis's excellent [Subband PCA code](https://github.com/dpwe/calc_sbpca) ([license MIT](https://github.com/dpwe/calc_sbpca/blob/master/LICENSE)) for pitch tracking. It uses [Gentle](https://github.com/lowerquality/gentle) (MIT) for aligning audio with text.
 
-
-
-
-Preparing data -
-
-git submodule init
-git submodule update
-
-ffmpeg -i AUDIO_FILE -ar 8000 -ac 1 a.wav
-python calc_sbpca/python/SAcC.py a.wav pitch.txt
-
-
-
+You can use the web browser interface to upload, process, and view audio files with their pitch traces.
