@@ -14,7 +14,7 @@ function ViewPage() {
   
   var $audio = this.$audio = document.createElement('audio');
   $audio.type = 'audio/wav';
-  $audio.src = '/blobs/' + data.playback_id + '.wav';
+  $audio.src = '/blobs/' + this.state.playback_id + '.wav';
   $el.appendChild($audio);
 
 
