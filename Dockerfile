@@ -16,6 +16,6 @@ VOLUME /drift/db
 
 EXPOSE 9876
 
-CMD cd /drift && python2 serve.py \
+CMD cd /drift && python serve.py \
 	--db_path /drift/db/app.db \
 	--blob_folder /drift/uploads
