@@ -3,7 +3,7 @@ FROM ubuntu:15.04
 RUN DEBIAN_FRONTEND=noninteractive && \
 	apt-get update && \
 	apt-get install -y  \
-		python-pip python-numpy \
+		ffmpeg python-pip python-numpy \
 		python-scipy python-pip && \
 	apt-get clean
 
