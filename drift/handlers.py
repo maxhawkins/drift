@@ -34,6 +34,8 @@ class SessionHandler(tornado.web.RequestHandler):
                 del sess['freq_hz']
             if 'waveform' in sess and not 'waveform' in to_sideload:
                 del sess['waveform']
+            if 'transcript' in sess and not 'transcript' in to_sideload:
+                del sess['transcript']
             respJSON = '{"session": %s}' % session.marshal_json(sess)
 
             self.set_header('Content-Type', 'text/json')
