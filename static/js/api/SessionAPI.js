@@ -2,9 +2,14 @@ function SessionAPI(baseURI) {
   this.baseURI = baseURI || '';
 }
 
-SessionAPI.prototype.get = function(session_id) {
+SessionAPI.prototype.get = function(session_id, options) {
   var xhr = new XMLHttpRequest();
-  xhr.open("GET", this.baseURI + "/sessions/" + session_id + '.json', true);
+  var url = '/sessions/' + session_id + '.json';
+  if (options && options.sideload) {
+    url += '?sideload=';
+    url += encodeURIComponent(options.sideload.join(','));
+  }
+  xhr.open("GET", this.baseURI + url, true);
   return new Promise(function(resolve, reject) {
     xhr.onerror = reject;
     xhr.onload = function(e) {

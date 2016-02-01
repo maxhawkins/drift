@@ -1,7 +1,7 @@
 function ViewPage() {
   var that = this;
 
-  var api = new SessionAPI();
+  var api = this.api = new SessionAPI();
 
   var state = this.state = data.session;
   this.state.currentTime = 0;
@@ -92,11 +92,15 @@ ViewPage.prototype._watchForUpdates = function() {
   this.isWatching = true;
   var watcher = new SessionWatcher(this.state.id);
   watcher.watch(function(sess) {
-    // TODO(maxhawkins): fix jank caused by this update
-    this.setState(sess);
     if (sess.status === 'DONE') {
       watcher.stop();
       this.isWatching = false;
+
+      this.api.get(this.state.id, {
+        sideload: ['transcript'],
+      }).then(function(updated) {
+        this.setState(updated);
+      }.bind(this));
     }
   }.bind(this));
 }
