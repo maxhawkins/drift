@@ -8,7 +8,7 @@ def generate(wav_data):
     [time in seconds, frequency in hertz].'''
 
     config = default_config()
-    config['thop'] = 0.001
+    config['thop'] = 0.001 # 1ms resolution
 
     classifier = SAcC(config)
 
