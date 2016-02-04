@@ -6,7 +6,11 @@ def generate(wav_data):
     Provided audio file should be an 8kHz 16bit unsigned integer PCM
     wav file encoded as a byte string. The return value has the format
     [time in seconds, frequency in hertz].'''
-    classifier = SAcC(default_config())
+
+    config = default_config()
+    config['thop'] = 0.001
+
+    classifier = SAcC(config)
 
     wav_stream = StringIO(wav_data)
     features = classifier.process_wav(wav_stream)
