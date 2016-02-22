@@ -16,4 +16,4 @@ function FileDialog() {
 
 FileDialog.prototype.activate = function() {
   this.$el.click();
-}
+};

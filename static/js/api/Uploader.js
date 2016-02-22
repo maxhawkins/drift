@@ -10,7 +10,7 @@ Upload.prototype.update = function(changes) {
   for (k in changes) {
     this[k] = changes[k];
   }
-}
+};
 
 function Uploader() {
   this.queue = [];
@@ -18,7 +18,7 @@ function Uploader() {
   this.uploadAPI = new UploadAPI();
 
   this._work = this._work.bind(this);
-}
+};
 
 Uploader.prototype.upload = function(file) {
   var upload = new Upload(file);
@@ -26,13 +26,13 @@ Uploader.prototype.upload = function(file) {
   this._notify();
 
   window.setTimeout(this._work, 0);
-}
+};
 
 Uploader.prototype._remaining = function() {
   return this.queue.filter(function(upload) {
     return upload.status === 'WAITING';
   });
-}
+};
 
 Uploader.prototype._work = function() {
   if (this.active >= 2) {
@@ -72,10 +72,10 @@ Uploader.prototype._work = function() {
     that.active -= 1;
     window.setTimeout(that._work, 0);
   });
-}
+};
 
 Uploader.prototype._notify = function() {
   if (this.onchange) {
     this.onchange(this.queue);
   }
-}
+};

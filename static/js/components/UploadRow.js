@@ -38,7 +38,7 @@ function formatTimestamp(ts) {
   str += pad(h % 12 + 1);
   str += ':' + pad(time.getMinutes());
   str += ':' + pad(time.getSeconds());
-  str += ' ' + ampm
+  str += ' ' + ampm;
   return str;
 }
 
@@ -49,4 +49,4 @@ UploadRow.prototype.render = function() {
   }
   this.$timestamp.innerText = formatTimestamp(this.props.timestamp);
   this.$status.innerText = this.props.status;
-}
+};

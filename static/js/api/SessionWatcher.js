@@ -12,7 +12,7 @@ function SessionWatcher(sessionID) {
 
 SessionWatcher.prototype.watch = function(callback) {
   this.callbacks.push(callback);
-}
+};
 
 SessionWatcher.prototype.awaitStatus = function(status) {
   return new Promise(function(resolve, reject) {
@@ -26,12 +26,12 @@ SessionWatcher.prototype.awaitStatus = function(status) {
       }
     });
   }.bind(this));
-}
+};
 
 SessionWatcher.prototype.stop = function() {
   this.stopped = true;
   this.callbacks = [];
-}
+};
 
 SessionWatcher.prototype._check = function() {
   this.api.get(this.sessionID)
@@ -46,4 +46,4 @@ SessionWatcher.prototype._check = function() {
         setTimeout(this._check, this.interval);
       }
     }.bind(this));
-}
+};

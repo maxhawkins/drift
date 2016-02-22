@@ -14,4 +14,4 @@ KeyListener.prototype._handle = function(e) {
     this.onpress();
   }
   e.preventDefault();
-}
+};

@@ -7,7 +7,7 @@ UploadAPI.prototype.post = function(file) {
   form.append('file', file);
 
   var xhr = new XMLHttpRequest();
-  xhr.open("POST", this.baseURI + "/upload", true);
+  xhr.open('POST', this.baseURI + "/upload", true);
 
   return new Promise(function(resolve, reject) {
     xhr.onerror = reject;
@@ -21,4 +21,4 @@ UploadAPI.prototype.post = function(file) {
     };
     xhr.send(form);
   });
-}
+};

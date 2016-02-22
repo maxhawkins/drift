@@ -23,7 +23,7 @@ DragListener.prototype._handleStart = function(e) {
   }
   this.isDragging = true;
   e.preventDefault();
-}
+};
 
 DragListener.prototype._handleEnd = function(e) {
   if (this.onend && this.isDragging === true) {

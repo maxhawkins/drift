@@ -3,7 +3,7 @@ function init() {
 
   var uploader = new Uploader();
 
-  var page = new UploadPage(uploader)
+  var page = new UploadPage(uploader);
   $main.appendChild(page.$el);
 
   page.render();

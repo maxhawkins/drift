@@ -11,7 +11,7 @@ function ViewPage() {
   this._watchForUpdates();
 
   var $el = this.$el = document.createElement('div');
-  
+
   var $audio = this.$audio = document.createElement('audio');
   $audio.type = 'audio/wav';
   $audio.src = '/blobs/' + this.state.playback_id + '.wav';
@@ -80,7 +80,7 @@ ViewPage.prototype.setState = function(updates) {
     this.state[k] = updates[k];
   }
   this.render();
-}
+};
 
 ViewPage.prototype._watchForUpdates = function() {
   if (this.isWatching) {
@@ -103,7 +103,7 @@ ViewPage.prototype._watchForUpdates = function() {
       }.bind(this));
     }
   }.bind(this));
-}
+};
 
 ViewPage.prototype.render = function() {
   var words = [];

@@ -49,11 +49,11 @@ UploadPage.prototype.setState = function(updates) {
     this.state[k] = updates[k];
   }
   this.render();
-}
+};
 
 UploadPage.prototype.render = function() {
   this.uploadTarget.props = {active: this.state.dragging};
   this.uploadTarget.render();
   this.uploadList.props = {uploads: this.state.uploads};
   this.uploadList.render();
-}
+};
