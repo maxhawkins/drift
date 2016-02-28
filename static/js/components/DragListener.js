@@ -1,4 +1,4 @@
-function DragListener() {
+export default function DragListener() {
   this.isDragging = false;
 
   this._handleStart = this._handleStart.bind(this);

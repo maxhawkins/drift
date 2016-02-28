@@ -1,18 +1,7 @@
-function Upload(file) {
-  this.name = file.name;
-  this.file = file;
-  this.id = null;
-  this.status = 'WAITING';
-  this.timestamp = new Date(Date.now());
-}
+import UploadAPI from './UploadAPI.js';
+import SessionWatcher from './SessionWatcher.js';
 
-Upload.prototype.update = function(changes) {
-  for (k in changes) {
-    this[k] = changes[k];
-  }
-};
-
-function Uploader() {
+export default function Uploader() {
   this.queue = [];
   this.active = 0;
   this.uploadAPI = new UploadAPI();
@@ -77,5 +66,19 @@ Uploader.prototype._work = function() {
 Uploader.prototype._notify = function() {
   if (this.onchange) {
     this.onchange(this.queue);
+  }
+};
+
+function Upload(file) {
+  this.name = file.name;
+  this.file = file;
+  this.id = null;
+  this.status = 'WAITING';
+  this.timestamp = new Date(Date.now());
+}
+
+Upload.prototype.update = function(changes) {
+  for (var k in changes) {
+    this[k] = changes[k];
   }
 };

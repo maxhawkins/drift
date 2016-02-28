@@ -1,4 +1,4 @@
-function UploadAPI(baseURI) {
+export default function UploadAPI(baseURI) {
   this.baseURI = baseURI || '';
 }
 
