@@ -41,16 +41,40 @@ export default class ViewPage extends React.Component {
       }
     };
 
-    function checkAudioState(t) {
-      var player = that.refs.player;
-      var newTime = player.currentTime;
-      that.setState({
+    // The timestamps we get from the <audio> tag change
+    // at around 30fps. For smoother (60fps) scrolling we
+    // need to animate between the timestamps instead.
+    var lastFrame = 0;
+    var lastPlayerTime = 0;
+    var animateCurrentTime = (t) => {
+      var player = this.refs.player;
+      var isPlaying = !player.paused;
+      var playerTime = player.currentTime;
+
+      var newTime = playerTime;
+
+      var diff = t - lastFrame;
+      lastFrame = t;
+
+      // TODO(maxhawkins): find a better way to estimate the
+      // rate. This way is pretty janky because we're not
+      // sampling the player's currentTime consistently.
+      if (isPlaying && playerTime === lastPlayerTime) {
+        newTime += diff / 1000;
+      }
+      lastPlayerTime = playerTime;
+
+      this.setState({
         currentTime: newTime,
-        playing: !player.paused,
+        playing: isPlaying,
       });
-      window.requestAnimationFrame(checkAudioState);
     }
-    window.requestAnimationFrame(checkAudioState);
+
+    function update(t) {
+      animateCurrentTime(t);
+      window.requestAnimationFrame(update);
+    }
+    window.requestAnimationFrame(update);
 
     this._watchForUpdates = this._watchForUpdates.bind(this);
     this._watchForUpdates();

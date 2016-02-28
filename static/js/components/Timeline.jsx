@@ -107,7 +107,11 @@ export default class Timeline extends React.Component {
           height={200}
           style={{position: 'absolute', top: 140, left: 5}} />
       </div>
-      <div ref="scroll" onScroll={this._onScroll.bind(this)} className="scroll" style={{overflowX: 'scroll'}}>
+      <div
+        ref="scroll"
+        className="scroll"
+        onScroll={this._onScroll.bind(this)}
+        style={{overflowX: 'scroll'}}>
         <TimelineCharts
           freqHz={this.props.freqHz}
           waveform={this.props.waveform}
