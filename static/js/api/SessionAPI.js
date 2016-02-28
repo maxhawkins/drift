@@ -1,4 +1,4 @@
-function SessionAPI(baseURI) {
+export default function SessionAPI(baseURI) {
   this.baseURI = baseURI || '';
 }
 

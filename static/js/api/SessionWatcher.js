@@ -1,4 +1,6 @@
-function SessionWatcher(sessionID) {
+import SessionAPI from './SessionAPI.js';
+
+export default function SessionWatcher(sessionID) {
   this.sessionID = sessionID;
   this.api = new SessionAPI();
   this.stopped = false;

@@ -1,4 +1,4 @@
-function KeyListener(keyCode) {
+export default function KeyListener(keyCode) {
   this.keyCode = keyCode;
   document.addEventListener('keydown', this._handle.bind(this), false);
 }
