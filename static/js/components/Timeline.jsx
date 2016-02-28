@@ -45,7 +45,8 @@ class TimelineCharts extends React.Component {
     this.refs.canvas.setAttribute('width', width);
   }
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.waveform != prevProps.waveform) {
+    if (this.props.waveform != prevProps.waveform ||
+      this.props.scaleX != prevProps.scaleX) {
       this._calcWidth();
     }
   }
