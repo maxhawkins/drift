@@ -13,3 +13,5 @@ Here's how to build:
   $ python serve.py
 
 Drift will be running at localhost:9876. Run `webpack -w` to update JS sources automatically on file save.
+
+Run `webpack -p` to produce a production build.
