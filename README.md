@@ -1,10 +1,8 @@
 # Drift
 **Pitch tracker explorer**
 
-![Alpha](https://img.shields.io/badge/status-alpha-red.svg)
+![Beta](https://img.shields.io/badge/status-beta-red.svg)
 [![Build Status](https://img.shields.io/travis/lowerquality/drift.svg)](https://travis-ci.org/lowerquality/drift)
-
-This project is under heavy development and not ready for use. Things will break!
 
 ## Installing
 
@@ -19,6 +17,10 @@ python serve.py --gentle_url <url for your gentle instance>
 ```
 
 By default the server listens at http://localhost:9876.
+
+## Developing
+
+The backend is written in Python. The frontend is written in JavaScript/React. Use [webpack](https://webpack.github.io/) to build the JavaScript sources. Running `webpack -p` produces a minified production build.
 
 ## How It Works
 
