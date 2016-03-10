@@ -4,7 +4,7 @@ export default class UploadRow extends React.Component {
   render() {
     var upload = this.props.upload;
 
-    var url = '';
+    var url = null;
     if (upload.status === 'DONE') {
       url = '/sessions/' + upload.id;
     }
