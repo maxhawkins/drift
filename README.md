@@ -26,6 +26,6 @@ The backend is written in Python. The frontend is written in JavaScript/React. U
 
 This project makes it easy to see the [F0 pitch](https://en.wikipedia.org/wiki/Fundamental_frequency) of your audio recordings.
 
-It uses the Python version of Dan Ellis's excellent [Subband PCA code](https://github.com/dpwe/calc_sbpca) ([license MIT](https://github.com/dpwe/calc_sbpca/blob/master/LICENSE)) for pitch tracking. It uses [Gentle](https://github.com/lowerquality/gentle) (MIT) for aligning audio with text.
+It uses the [Python version](https://github.com/dpwe/calc_sbpca) of Dan Ellis's excellent [Subband PCA](http://www.ee.columbia.edu/~dpwe/pubs/LeeEllis12-SAcC.pdf) algorithm ([license MIT](https://github.com/dpwe/calc_sbpca/blob/master/LICENSE)) for pitch tracking. It uses [Gentle](https://github.com/lowerquality/gentle) (MIT) for aligning audio with text.
 
 You can use the web browser interface to upload, process, and view audio files with their pitch traces.
