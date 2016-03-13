@@ -29,3 +29,5 @@ This project makes it easy to see the [F0 pitch](https://en.wikipedia.org/wiki/F
 It uses the [Python version](https://github.com/dpwe/calc_sbpca) of Dan Ellis's excellent [Subband PCA](http://www.ee.columbia.edu/~dpwe/pubs/LeeEllis12-SAcC.pdf) algorithm ([license MIT](https://github.com/dpwe/calc_sbpca/blob/master/LICENSE)) for pitch tracking. It uses [Gentle](https://github.com/lowerquality/gentle) (MIT) for aligning audio with text.
 
 You can use the web browser interface to upload, process, and view audio files with their pitch traces.
+
+![Drift user interface](https://github.com/lowerquality/drift/blob/master/doc/screenshot.png)
