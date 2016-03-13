@@ -1,5 +1,5 @@
 drift:
-    image: lowerquality/drift
+    image: maxhawkins/drift
     restart: always
     links:
       - gentle:gentle

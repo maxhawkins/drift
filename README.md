@@ -2,7 +2,7 @@
 **Pitch tracker explorer**
 
 ![Beta](https://img.shields.io/badge/status-beta-red.svg)
-[![Build Status](https://img.shields.io/travis/lowerquality/drift.svg)](https://travis-ci.org/lowerquality/drift)
+[![Build Status](https://img.shields.io/travis/maxhawkins/drift.svg)](https://travis-ci.org/maxhawkins/drift)
 
 ## Installing
 
@@ -30,4 +30,4 @@ It uses the [Python version](https://github.com/dpwe/calc_sbpca) of Dan Ellis's 
 
 You can use the web browser interface to upload, process, and view audio files with their pitch traces.
 
-![Drift user interface](https://github.com/lowerquality/drift/blob/master/doc/screenshot.png)
+![Drift user interface](https://github.com/maxhawkins/drift/blob/master/doc/screenshot.png)

@@ -19,12 +19,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lowerquality/drift.git"
+    "url": "git+https://github.com/maxhawkins/drift.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/lowerquality/drift/issues"
+    "url": "https://github.com/maxhawkins/drift/issues"
   },
-  "homepage": "https://github.com/lowerquality/drift#readme"
+  "homepage": "https://github.com/maxhawkins/drift#readme"
 }
