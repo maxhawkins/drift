@@ -60,3 +60,8 @@
     background: #999;
     position: absolute;
 }
+.align-error {
+    max-width: 500px;
+    margin: 1em 0;
+    color: red;
+}

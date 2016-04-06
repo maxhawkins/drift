@@ -1,4 +1,5 @@
 import traceback
+import logging
 
 import drift.ffmpeg as ffmpeg
 import drift.pitches as pitches
@@ -12,6 +13,7 @@ def transcribe(gentle_client, blob_store, sess, transcript):
 		sess['status'] = 'DONE'
 		return sess
 	except Exception, e:
+		logging.error(traceback.format_exc())
 		sess['status'] = 'ERROR'
 		sess['error'] = traceback.format_exc()
 		return sess
@@ -37,6 +39,7 @@ def process(session, blob_store):
 		session['status'] = 'DONE'
 		return session
 	except Exception, e:
+		logging.error(traceback.format_exc())
 		session['status'] = 'ERROR'
 		session['error'] = traceback.format_exc()
 		return session

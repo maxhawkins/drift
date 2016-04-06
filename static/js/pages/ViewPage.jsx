@@ -90,7 +90,12 @@ export default class ViewPage extends React.Component {
     this.isWatching = true;
     var watcher = new SessionWatcher(this.state.id);
     watcher.watch(function(sess) {
-      if (sess.status === 'DONE') {
+      if (sess.status === 'ERROR') {
+        that.setState({status: 'ERROR'});
+
+        watcher.stop();
+        that.isWatching = false;
+      } if (sess.status === 'DONE') {
         watcher.stop();
         that.isWatching = false;
 
@@ -130,6 +135,11 @@ export default class ViewPage extends React.Component {
       });
     }
     var csvURL = this.state.id + '.csv';
+
+    var errorMsg = '';
+    if (this.state.status === 'ERROR') {
+      errorMsg = 'Uh oh, there was a transcription error. Please try re-running Drift or contact the administrator.';
+    }
     
     return (<div>
       <h2>{this.state.name}</h2>
@@ -145,6 +155,9 @@ export default class ViewPage extends React.Component {
       <ZoomBar
         amount={this.state.zoom}
         onChange={this.onZoom.bind(this)} />
+      <div className="align-error">
+        {errorMsg}
+      </div>
       <TranscriptInput
         disabled={this.state.status !== 'DONE'}
         onSubmit={this.onTranscript.bind(this)} />
