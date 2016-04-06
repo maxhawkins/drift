@@ -45,6 +45,7 @@ def main():
     pool = Pool(args.pool_size)
     gentle_client = drift.gentle.Client(args.gentle_url)
 
+    logging.info('contacting Gentle at %s...', args.gentle_url)
     if not gentle_client.ping():
         logging.error(
             'failed to contact Gentle at %s', args.gentle_url)
