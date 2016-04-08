@@ -25,3 +25,17 @@ header a {
 header h1 {
     margin: 0;
 }
+.issues {
+    position: fixed;
+    bottom: 0;
+    right: 15px;
+    font-size: 12px;
+    background: #333;
+    color: #ccc;
+    text-decoration: none;
+    padding: 10px 15px;
+}
+.issues:hover {
+    background: #222;
+    text-decoration: underline;
+}
