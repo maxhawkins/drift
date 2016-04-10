@@ -7,3 +7,5 @@ drift:
     command: sh -c "cd /drift && python serve.py --db_path /drift/db/app.db --blob_folder /drift/uploads --gentle_url http://$$GENTLE_PORT_8765_TCP_ADDR:8765"
 gentle:
     image: lowerquality/gentle
+    ports:
+      - 8765:8765
